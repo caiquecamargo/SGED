@@ -1,0 +1,57 @@
+img{
+  display: block;
+  max-width: 100%;
+}
+
+.container{
+  display: grid;
+  grid: 
+    "logo" "login"
+    / 1fr 1fr
+  ;
+}
+
+.logo{
+  grid-area: logo;
+  background: #002D40;
+  background-size: cover;
+  padding: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  height: 1080px;
+}
+
+.login img{
+  max-width: 300px;
+  min-width: 200px;
+}
+
+.login form{
+  display: flex;
+  flex-direction: column;
+  margin: 30px auto;
+}
+
+.login form input{
+  margin-bottom: 15px;
+  padding: 5px;
+  font-family: Georgia, serif;
+  color: #002D40;
+}
+
+.login form button{
+  font-family: 'Cinzel', serif;
+  padding: 5px;
+  cursor: pointer;
+  border: none;
+  background: #002D40;
+  color: #fff;
+}
