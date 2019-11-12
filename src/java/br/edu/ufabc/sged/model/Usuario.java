@@ -15,7 +15,7 @@ public class Usuario implements java.io.Serializable{
     private int     id;
     private String  nome;
     private String  email;
-    private String  password;
+    private String  senha;
     private int     nivel_de_acesso;
     private String  grupo;
     private List<Item> itens;
@@ -63,17 +63,17 @@ public class Usuario implements java.io.Serializable{
     }
 
     /**
-     * @return the password
+     * @return the senha
      */
-    public String getPassword() {
-        return password;
+    public String getSenha() {
+        return senha;
     }
 
     /**
-     * @param password the password to set
+     * @param senha the senha to set
      */
-    public void setPassword(String password) {
-        this.password = password;
+    public void setSenha(String senha) {
+        this.senha = senha;
     }
 
     /**

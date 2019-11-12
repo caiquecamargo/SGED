@@ -5,23 +5,83 @@
  */
 package br.edu.ufabc.sged.dao;
 
-import br.edu.ufabc.sged.model.Doc;
-import br.edu.ufabc.sged.model.Item;
-import br.edu.ufabc.sged.model.Music;
-import br.edu.ufabc.sged.model.PDF;
 import br.edu.ufabc.sged.model.Usuario;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import sun.jvm.hotspot.utilities.soql.SOQLException;
 
 /**
  *
  * @author Caique de Camargo
  */
 public class UsuarioDAO implements GenericDAO{
-
+    private DataSource dataSource;
+    
+    public UsuarioDAO (DataSource dataSource){
+        this.dataSource = dataSource;
+    }
+    
     @Override
     public void create(Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            if(o instanceof Usuario){
+                String SQL = "INSERT INTO tblUsuario values (null, ?, ?, ?, null)";
+                PreparedStatement stm = dataSource.getConnection().prepareStatement(SQL, Statement.RETURN_GENERATED_KEYS);
+                Usuario usuario = (Usuario) o;
+                stm.setString(1, usuario.getNome());
+                stm.setString(2, usuario.getEmail());
+                stm.setString(3, usuario.getSenha());
+                int res = stm.executeUpdate();
+                if (res != 0){
+                    ResultSet rs = stm.getGeneratedKeys();
+                    if (rs.next()){
+                        usuario.setId(rs.getInt(1));
+                    }
+                    rs.close();
+                }
+                stm.close();
+            } else {
+                throw new RuntimeException("Invalid User Model Object");
+            }
+        } catch (SQLException ex) {
+            System.out.println("Erro ao inserir usuário "+ex.getMessage());
+        }
+    }
+    
+    @Override
+    public List<Object> read(Object o) {
+        try{
+            if(o instanceof Usuario){
+                Usuario incompleto = (Usuario) o;
+                String SQL = "SELECT * FROM tblUsuario WHERE email = ? AND senha = ?";
+                PreparedStatement stm = dataSource.getConnection().prepareStatement(SQL);
+                stm.setString(1, incompleto.getEmail());
+                stm.setString(2, incompleto.getSenha());
+                ResultSet rs = stm.executeQuery();
+                ArrayList<Object> result = new ArrayList<Object>();
+                if (rs.next()){
+                    Usuario usuario = new Usuario();
+                    usuario.setId(rs.getInt("idUsuario"));
+                    usuario.setNome(rs.getString("nome"));
+                    usuario.setEmail(rs.getString("email"));
+                    usuario.setSenha(rs.getString("senha"));
+                    usuario.setNivel_de_acesso(rs.getInt("nivelDeAcesso"));
+                    result.add(usuario);
+                }
+                stm.close();
+                rs.close();
+                return result;
+            }else{
+                throw new RuntimeException("Invalid Object");
+            }
+        }catch(SQLException ex){
+            System.out.println("Erro ao recuperar Usuario - "+ex.getMessage());
+        }
+        return null;
     }
 
     @Override
@@ -32,46 +92,6 @@ public class UsuarioDAO implements GenericDAO{
     @Override
     public void delete(Object o) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public List<Object> read(Object o) {
-        Usuario usuario = new Usuario();
-        usuario.setId(1);
-        usuario.setEmail("caique.de.camargo@hotmail.com");
-        usuario.setNome("Caique de Camargo");
-        usuario.setPassword("1234");
-        usuario.setGrupo("Admin");
-        usuario.setNivel_de_acesso(0);
-        
-        ArrayList<Item> itens = new ArrayList<Item>();
-        Item pdf = new PDF();
-        pdf.setId(1);
-        pdf.setNome("Descricao do site");
-        pdf.setRestricoes("");
-        pdf.setSrc("arquivos/descricao.pdf");
-        itens.add(pdf);
-        
-        Item music = new Music();
-        music.setId(2);
-        music.setNome("Symphony of Destruction");
-        music.setRestricoes("");
-        music.setSrc("music/symphony_of_destruction.mp3");
-        itens.add(music);
-        
-        Item doc = new Doc();
-        doc.setId(3);
-        doc.setNome("Formulario");
-        doc.setRestricoes("");
-        doc.setSrc("arquivos/formulario.doc");
-        itens.add(doc);
-        
-        usuario.setItens(itens);
-        
-        ArrayList<Object> resultado = new ArrayList<Object>();
-        resultado.add(resultado);
-        
-        return resultado;
     }
     
 }

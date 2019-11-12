@@ -11,13 +11,15 @@
 <body>
   <main class="container">
     <div class="logo">
-      <img src="img/SGED.svg" alt="Logo SGED">
+      <img src="img/SGED.svg" alt="Logo SGED" class="img-principal">
+      <img src="img/SGED-tiny.svg" alt="Logo SGED" class="img-tiny">
     </div>
     <div class="login">
       <img src="img/login_logo.svg" alt="Login logo">
       <form role="form" action="loginservlet" method="POST">
-          <input type="text" placeholder="Nome de usuário" name="txt_user">
-          <input type="password" placeholder="Senha" name="txt_password">
+        <input type="text" placeholder="Email" name="txt_user">
+        <input type="password" placeholder="Senha" name="txt_password">
+        <a href="newuser">Solicitar Registro</a>
         <button type="submit">LOGIN</button>
       </form>
     </div>

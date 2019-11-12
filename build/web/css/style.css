@@ -3,55 +3,259 @@ img{
   max-width: 100%;
 }
 
+h1{
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 2em;
+  color: #002D40;
+}
+
+/* INDEX */
+
 .container{
   display: grid;
   grid: 
-    "logo" "login"
+    "logo" "login" 1fr
     / 1fr 1fr
   ;
 }
 
+@media(max-width: 750px){
+  .container{
+    grid: 
+    "logo"
+    "login"
+    / 1fr
+    ;
+  }
+}
+
 .logo{
   grid-area: logo;
+  justify-self: stretch;
   background: #002D40;
-  background-size: cover;
-  padding: 30px;
+  padding: 30px 20%;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.img-principal{
+  display: block;
+}
+
+.img-tiny{
+  display: none;
+}
+
+@media (max-width: 750px){
+  .logo{
+    padding: 15px;
+  }
+
+  .img-principal{
+    display: none;
+  }
+  
+  .img-tiny{
+    display: block;
+  }
 }
 
 .login{
+  justify-self: stretch;
+  padding: 30px 20%;
   display: flex;
-  align-items: center;
+  /* align-items: center; */
   justify-content: center;
   flex-direction: column;
-  height: 1080px;
 }
 
 .login img{
-  max-width: 300px;
-  min-width: 200px;
+  min-height: 35%;
 }
 
 .login form{
   display: flex;
   flex-direction: column;
-  margin: 30px auto;
+  margin-top: 30px;
 }
 
 .login form input{
   margin-bottom: 15px;
   padding: 5px;
-  font-family: Georgia, serif;
+  font-family: 'Cinzel', Georgia, serif;
   color: #002D40;
 }
 
+.login a{
+  align-self: flex-end;
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 0.875em;
+  color: #002D40;
+}
+
+.login a:hover{
+  color: #00B2FF;
+}
+
 .login form button{
-  font-family: 'Cinzel', serif;
-  padding: 5px;
+  font-family: 'Cinzel', Georgia, serif;
+  margin-top: 15px;
+  padding: 10px 45px;
   cursor: pointer;
   border: none;
   background: #002D40;
   color: #fff;
+  align-self: center;
+}
+
+.login form button:hover{
+  background: #00B2FF;
+}
+
+/* ESTRUTURA */
+
+.estrutura{
+  display: grid;
+  grid: 
+    "header header" 100px
+    "nav    content" 1fr
+    "footer footer" 100px
+    / 1fr 7fr
+  ;
+}
+
+/* HEADER */
+
+.header{
+  grid-area: header;
+  background: #002D40;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+}
+
+.navegacao{
+  display: flex;
+  align-items: center;
+}
+
+.navegacao li + li{
+  margin-left: 15px;
+}
+
+.navegacao li p{
+  color: #fff;
+  font-family: 'Cinzel', Georgia, serif;
+}
+
+.navegacao li a{
+  padding: 10px;
+  color: #fff;
+  font-family: 'Cinzel', Georgia, serif;
+}
+
+.navegacao li a:hover{
+  color: #00B2FF;
+}
+
+/* MENUS */
+
+.nav{
+  grid-area: nav;
+  height: 600px;
+  background: #005980;
+}
+
+/* CONTENT */
+
+.content{
+  grid-area: content;
+}
+
+/* FOOTER */
+
+.footer{
+  grid-area: footer;
+  background: #002D40;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30px;
+}
+
+.footer p{
+  color: #fff;
+  font-family: 'Cinzel', Georgia, serif;
+  text-align: center;
+}
+
+/* NEW USER */
+
+.novousuario{
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-content: center;
+  padding: 100px 25%;
+}
+
+.novousuario h1{
+  margin-bottom: 100px;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.novousuario h1:after{
+  content: "";
+  display: block;
+  width: 100%;
+  height: 3px;
+  background: #002D40;
+}
+
+.novousuario form{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-content: center;
+  padding: 0 30px;
+}
+
+.novousuario form input{
+  margin-bottom: 30px;
+  padding: 10px;
+  border: #002D40 solid;
+}
+
+.novousuario form button{
+  background: #002D40;
+  color: #fff;
+  font-family: 'Cinzel', Georgia, serif;
+  margin-top: 70px;
+  padding: 10px 30px;
+  align-self: center;
+  border: none;
+  cursor: pointer;
+}
+
+.novousuario form button:hover{
+  background: #00B2FF;
+}
+
+@media (max-width: 750px){
+  .novousuario{
+    padding: 50px 10%;
+  }
+
+  .novousuario h1{
+    margin-bottom: 50px;
+    font-size: 1.5em;
+  }
+
+  .novousuario form button{
+    margin-top: 20px;
+  }
 }
