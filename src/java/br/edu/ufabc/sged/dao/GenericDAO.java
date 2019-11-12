@@ -12,7 +12,7 @@ import java.util.List;
  * @author Caique de Camargo
  */
 public interface GenericDAO {
-    public void create(Object o);
+    public int create(Object o);
     public void update(Object o);
     public void delete(Object o);
     public List<Object> read(Object o);

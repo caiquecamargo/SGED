@@ -12,7 +12,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import sun.jvm.hotspot.utilities.soql.SOQLException;
 
 /**
  *
@@ -26,10 +25,10 @@ public class UsuarioDAO implements GenericDAO{
     }
     
     @Override
-    public void create(Object o) {
+    public int create(Object o) {
         try {
             if(o instanceof Usuario){
-                String SQL = "INSERT INTO tblUsuario values (null, ?, ?, ?, null)";
+                String SQL = "INSERT INTO tblUsuario values (null, ?, ?, ?, null, 0)";
                 PreparedStatement stm = dataSource.getConnection().prepareStatement(SQL, Statement.RETURN_GENERATED_KEYS);
                 Usuario usuario = (Usuario) o;
                 stm.setString(1, usuario.getNome());
@@ -48,8 +47,10 @@ public class UsuarioDAO implements GenericDAO{
                 throw new RuntimeException("Invalid User Model Object");
             }
         } catch (SQLException ex) {
-            System.out.println("Erro ao inserir usuário "+ex.getMessage());
+            System.out.println("Erro ao inserir usuário "+ex.getMessage() + " " + ex.getErrorCode());
+            return ex.getErrorCode();
         }
+        return 0;
     }
     
     @Override

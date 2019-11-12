@@ -22,6 +22,7 @@ public class NewUser extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        request.setAttribute("errorSTR", " ");
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/newuser.jsp");
         dispatcher.forward(request, response);
     }

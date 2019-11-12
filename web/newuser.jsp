@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<jsp:useBean id="errorSTR" type="java.lang.String" scope="request"/>
 <html lang="pt-br">
 <head>
 <meta charset="utf-8"/>
@@ -11,9 +12,9 @@
 <body>
   <div class="estrutura">
     <header class="header">
-      <a href="paginainicial"><img src="img/SGED-tiny.svg" alt="Logo SGED"></a>
+      <a href="indexservlet"><img src="img/SGED-tiny.svg" alt="Logo SGED"></a>
       <ul class="navegacao">
-        <li><a href="paginainicial">Voltar para a página inicial</a></li>
+        <li><a href="indexservlet">Voltar para a página inicial</a></li>
       </ul>
     </header>
     <main class="novousuario">
@@ -22,6 +23,9 @@
         <input type="text" placeholder="Nome Completo" name="txt_nome">
         <input type="text" placeholder="Email" name="txt_email">
         <input type="password" placeholder="Senha" name="txt_senha">
+        <label class="underform">
+          <p class="erro">${errorSTR}</p>
+        </label>
         <button>Enviar Solicitação</button>
       </form>
     </main>

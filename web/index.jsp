@@ -1,4 +1,6 @@
 <!DOCTYPE html>
+<jsp:useBean id="errorSTR" type="java.lang.String" scope="request"/>
+<%@taglib uri="http://java.sun.com/jstl/core_rt" prefix="c" %>
 <html lang="pt-br">
 <head>
 <meta charset="utf-8"/>
@@ -19,7 +21,10 @@
       <form role="form" action="loginservlet" method="POST">
         <input type="text" placeholder="Email" name="txt_user">
         <input type="password" placeholder="Senha" name="txt_password">
-        <a href="newuser">Solicitar Registro</a>
+        <label class="underform">
+          <p class="erro">${errorSTR}</p>
+          <a href="newuser">Solicitar Registro</a>
+        </label>
         <button type="submit">LOGIN</button>
       </form>
     </div>

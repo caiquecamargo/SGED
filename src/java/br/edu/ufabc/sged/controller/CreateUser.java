@@ -34,7 +34,7 @@ public class CreateUser extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        String page = "/index.html";
+        String page = "/newuser.jsp";
         String nome  = request.getParameter("txt_nome");
         String email = request.getParameter("txt_email");
         String senha = request.getParameter("txt_senha");
@@ -46,18 +46,24 @@ public class CreateUser extends HttpServlet {
 
         DataSource datasource = new DataSource();
         UsuarioDAO usuarioDAO = new UsuarioDAO(datasource);
-        usuarioDAO.create(usuario);
+        int erro = usuarioDAO.create(usuario);
 
         try{
             datasource.getConnection().close();
-            if (usuario.getId() != 0) page = "/home.jsp";
+            System.out.println(usuario.getId());
+            if (erro == 0) {
+                page = "/index.jsp";
+                request.setAttribute("errorSTR", " ");
+            } else {
+                if (erro == 1062) request.setAttribute("errorSTR", "Usuário já existe");
+            }
         } catch (SQLException ex){
             System.out.println("Erro ao fechar Conexão - "+ex.getMessage());
             request.setAttribute("errorMSG", "Erro ao criar nova conta de usuário");
-            page = "/error.jsp";
         }
         
-        if (usuario.getId() != 0) request.getSession().setAttribute("usuario", usuario);
+        System.out.println(page);
+        
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(page);
         dispatcher.forward(request, response);
     }

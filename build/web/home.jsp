@@ -19,7 +19,16 @@
         <li><a href="logout">Logout</a></li>
       </ul>
     </header>
-    <nav class="nav">Menus</nav>
+    <nav class="nav">
+      <ul>
+        <li><a href="/">Adicionar novos itens</a></li>
+        <li><a href="/">Visualizar itens</a></li>
+        <li><a href="/">Adicionar grupos</a></li>
+        <li><a href="/">Editar grupos</a></li>
+        <li><a href="/">Adicionar Pessoas</a></li>
+        <li><a href="/">Editar Pessoas</a></li>
+      </ul>
+    </nav>
     <main class="content">Conteudo</main>
     <footer class="footer">
       <p>Criado por Caique de Camargo de Camargo como Projeto de Graduação em Computação da Universidade Federal do ABC</p>
