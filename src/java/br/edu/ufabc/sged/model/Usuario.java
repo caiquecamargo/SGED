@@ -17,7 +17,8 @@ public class Usuario implements java.io.Serializable{
     private String  email;
     private String  senha;
     private int     nivel_de_acesso;
-    private String  grupo;
+    private int     situacao;
+    private List<Grupo>  grupo;
     private List<Item> itens;
 
     /**
@@ -93,14 +94,14 @@ public class Usuario implements java.io.Serializable{
     /**
      * @return the grupo
      */
-    public String getGrupo() {
+    public List<Grupo> getGrupo() {
         return grupo;
     }
 
     /**
      * @param grupo the grupo to set
      */
-    public void setGrupo(String grupo) {
+    public void setGrupo(List<Grupo> grupo) {
         this.grupo = grupo;
     }
 
@@ -116,6 +117,20 @@ public class Usuario implements java.io.Serializable{
      */
     public void setItens(List<Item> itens) {
         this.itens = itens;
+    }
+
+    /**
+     * @return the situacao
+     */
+    public int getSituacao() {
+        return situacao;
+    }
+
+    /**
+     * @param situacao the situacao to set
+     */
+    public void setSituacao(int situacao) {
+        this.situacao = situacao;
     }
     
 }

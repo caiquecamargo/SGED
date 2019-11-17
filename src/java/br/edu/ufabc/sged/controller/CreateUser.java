@@ -46,23 +46,18 @@ public class CreateUser extends HttpServlet {
 
         DataSource datasource = new DataSource();
         UsuarioDAO usuarioDAO = new UsuarioDAO(datasource);
-        int erro = usuarioDAO.create(usuario);
-
-        try{
+        
+        try {
+            usuarioDAO.create(usuario);
             datasource.getConnection().close();
-            System.out.println(usuario.getId());
-            if (erro == 0) {
-                page = "/index.jsp";
-                request.setAttribute("errorSTR", " ");
-            } else {
-                if (erro == 1062) request.setAttribute("errorSTR", "Usuário já existe");
-            }
+            page = "/index.jsp";
+            request.setAttribute("errorSTR", " ");
+        } catch (RuntimeException e) {
+            request.setAttribute("errorSTR", e.getMessage());
         } catch (SQLException ex){
             System.out.println("Erro ao fechar Conexão - "+ex.getMessage());
-            request.setAttribute("errorMSG", "Erro ao criar nova conta de usuário");
+            request.setAttribute("errorMSG", "Erro ao adicionar usuário, contate administrador do sistema");
         }
-        
-        System.out.println(page);
         
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(page);
         dispatcher.forward(request, response);

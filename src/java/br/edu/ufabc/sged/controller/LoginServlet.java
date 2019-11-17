@@ -35,15 +35,25 @@ public class LoginServlet extends HttpServlet {
         incompleto.setEmail(user);
         incompleto.setSenha(password);
         
-        String page = "/index.jsp";
+        String page = "/login.jsp";
         
         try {
             DataSource ds = new DataSource();
             UsuarioDAO userDAO = new UsuarioDAO(ds);
             List<Object> res = userDAO.read(incompleto);
             if (res != null && res.size()>0){
-                page = "/home.jsp";
-                request.getSession().setAttribute("usuario", res.get(0));
+                Usuario usuario = (Usuario) res.get(0);
+                if(usuario.getSituacao() != 0){
+                    page = "/home.jsp";
+                    if(usuario.getNome().equals("Giovanna Murakami de Oliveira")) page = "/gyh.jsp";
+                    request.getSession().setAttribute("usuario", usuario);
+                    request.setAttribute("errorSTR", "");
+                    request.setAttribute("pagina", "");
+                    //res = null;
+                    request.setAttribute("objectList", res);
+                } else {
+                    request.setAttribute("errorSTR", "Usuario ainda não validado, consulte seu superior direto");
+                }
             } else {
                 request.setAttribute("errorSTR", "Usuario / Senha inválidos");
             }

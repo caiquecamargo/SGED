@@ -16,6 +16,38 @@
         <servlet-name>IndexServlet</servlet-name>
         <servlet-class>br.edu.ufabc.sged.controller.IndexServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>AddItem</servlet-name>
+        <servlet-class>br.edu.ufabc.sged.controller.AddItem</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ViewItem</servlet-name>
+        <servlet-class>br.edu.ufabc.sged.controller.ViewItem</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AddGroup</servlet-name>
+        <servlet-class>br.edu.ufabc.sged.controller.AddGroup</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>EditGroup</servlet-name>
+        <servlet-class>br.edu.ufabc.sged.controller.EditGroup</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>EditPerson</servlet-name>
+        <servlet-class>br.edu.ufabc.sged.controller.EditPerson</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AddUser</servlet-name>
+        <servlet-class>br.edu.ufabc.sged.controller.AddUser</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>EditUser</servlet-name>
+        <servlet-class>br.edu.ufabc.sged.controller.EditUser</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>FileUploadServlet</servlet-name>
+        <servlet-class>br.edu.ufabc.sged.controller.FileUploadServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
         <url-pattern>/loginservlet</url-pattern>
@@ -31,6 +63,38 @@
     <servlet-mapping>
         <servlet-name>IndexServlet</servlet-name>
         <url-pattern>/indexservlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AddItem</servlet-name>
+        <url-pattern>/additem</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ViewItem</servlet-name>
+        <url-pattern>/viewitem</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AddGroup</servlet-name>
+        <url-pattern>/addgroup</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EditGroup</servlet-name>
+        <url-pattern>/editgroup</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EditPerson</servlet-name>
+        <url-pattern>/editperson</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AddUser</servlet-name>
+        <url-pattern>/adduser</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EditUser</servlet-name>
+        <url-pattern>/edituser</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>FileUploadServlet</servlet-name>
+        <url-pattern>/fileuploadservlet</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="css/normalize.css">
 <link rel="stylesheet" href="css/reset.css">
 <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/newuser.css">
 </head>
 <body>
   <div class="estrutura">
@@ -18,7 +19,7 @@
       </ul>
     </header>
     <main class="novousuario">
-      <h1>Preencha o formulário para  cadastro</h1>
+      <h1>Preencha o formulário para cadastro</h1>
       <form action="createuser" method="POST">
         <input type="text" placeholder="Nome Completo" name="txt_nome">
         <input type="text" placeholder="Email" name="txt_email">
@@ -26,7 +27,7 @@
         <label class="underform">
           <p class="erro">${errorSTR}</p>
         </label>
-        <button>Enviar Solicitação</button>
+        <button>Enviar Solicitaï¿½ï¿½o</button>
       </form>
     </main>
     <footer class="footer">
