@@ -5,7 +5,12 @@
  */
 package br.edu.ufabc.sged.dao;
 
+import br.edu.ufabc.sged.model.Doc;
 import br.edu.ufabc.sged.model.Grupo;
+import br.edu.ufabc.sged.model.Image;
+import br.edu.ufabc.sged.model.Item;
+import br.edu.ufabc.sged.model.Music;
+import br.edu.ufabc.sged.model.PDF;
 import br.edu.ufabc.sged.model.Usuario;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -48,7 +53,7 @@ public class UsuarioDAO implements GenericDAO{
                 throw new RuntimeException("Invalid User Model Object");
             }
         } catch (SQLException ex) {
-            System.out.println("Erro ao inserir usuário "+ex.getMessage() + " " + ex.getErrorCode());
+            System.err.println("Erro ao inserir usuário "+ex.getMessage());
             if (ex.getErrorCode() == 1062)throw new RuntimeException("Usuário já existe");
             throw new RuntimeException("Erro ao adicionar usuário, contate administrador do sistema");
         }
@@ -130,7 +135,7 @@ public class UsuarioDAO implements GenericDAO{
     
     public void setUsuarioGrupo(Object u, Object g){
         try {
-            if(u instanceof Usuario){
+            if(u instanceof Usuario && g instanceof Grupo){
                 Usuario user  = (Usuario) u;
                 Grupo   group = (Grupo)   g;
                 String SQL = "INSERT INTO tblusuariogrupo values(?, ?)";
@@ -152,7 +157,7 @@ public class UsuarioDAO implements GenericDAO{
         try {
             if (o instanceof Usuario){
                 Usuario usuario = (Usuario) o;
-                String SQL = "SELECT * FROM tblusuariogrupo WHERE idUsuario = ?";
+                String SQL = "SELECT * FROM tblusuariogrupo INNER JOIN tblgrupo ON tblusuariogrupo.idGrupo = tblgrupo.idGrupo WHERE tblusuariogrupo.idUsuario = ?";
                 PreparedStatement stm = dataSource.getConnection().prepareStatement(SQL);
                 stm.setInt(1, usuario.getId());
                 ResultSet rs = stm.executeQuery();
@@ -160,15 +165,75 @@ public class UsuarioDAO implements GenericDAO{
                 while(rs.next()){
                     Grupo grupo = new Grupo();
                     grupo.setId(rs.getInt("idGrupo"));
-                    GrupoDAO grupodao = new GrupoDAO(dataSource);
-                    try {
-                        grupos.add(grupodao.readOnly(grupo));
-                    } catch (RuntimeException e) {
-                        System.out.println(e.getMessage());
-                        throw new RuntimeException(e.getMessage());
-                    }
+                    grupo.setNome(rs.getString("nome"));
+                    grupo.setDescricao(rs.getString("descricao"));
+                    grupo.setNivel(rs.getInt("nivel"));
+                    grupos.add(grupo);
                 }
                 return grupos;
+            } else {
+                throw new RuntimeException("Invalid User Model Object");
+            }
+        } catch (SQLException ex) {
+            System.err.println("Erro ao recuperar grupos do usuário. "+ex.getMessage());
+            throw new RuntimeException("Erro ao recuperar grupos do usuário. "+ex.getMessage());
+        }
+    }
+    
+    public void setUsuarioItem(Object u, Object i){
+        try{
+            if(u instanceof Usuario && i instanceof Item){
+                Usuario user = (Usuario) u;
+                Item    item = (Item)    i;
+                String SQL = "INSERT INTO tblusuarioitem VALUES (?, ?)";
+                PreparedStatement stm = dataSource.getConnection().prepareStatement(SQL);
+                stm.setInt(1, user.getId());
+                stm.setInt(2, item.getId());
+                stm.executeUpdate();
+                stm.close();
+            } else {
+                throw new RuntimeException("Invalid Model Object in Insert Relation of Usuario AND Item");
+            }
+        } catch (SQLException ex){
+            System.err.println("Erro ao adicionar relação UsuarioItem. "+ex.getMessage());
+            throw new RuntimeException("Erro ao adicionar relação UsuarioITem");
+        }
+    }
+    
+    public List<Object> readUsuarioItem(Object o){
+        try {
+            if (o instanceof Usuario){
+                Usuario usuario = (Usuario) o;
+                String SQL = "SELECT * FROM tblusuarioitem INNER JOIN tblitem ON tblusuarioitem.idItem = tblitem.idItem WHERE tblusuarioitem.idUsuario = ?";
+                PreparedStatement stm = dataSource.getConnection().prepareStatement(SQL);
+                stm.setInt(1, usuario.getId());
+                ResultSet rs = stm.executeQuery();
+                ArrayList<Object> items = new ArrayList<>();
+                Item item = null;
+                while(rs.next()){
+                    switch (rs.getString("tipo")){
+                        case "PDF":
+                            item = new PDF();
+                            break;
+                        case "DOC":
+                            item = new Doc();
+                            break;
+                        case "IMAGEM":
+                            item = new Image();
+                            break;
+                        case "MUSIC":
+                            item = new Music();
+                            break;
+                        default:
+                            throw new RuntimeException("Erro ao recuperar item");
+                    }
+                    item.setId(rs.getInt("idItem"));
+                    item.setNome(rs.getString("nome"));
+                    item.setRestricoes(rs.getString("restricoes"));
+                    item.setSrc(rs.getString("src"));
+                    items.add(item);
+                }
+                return items;
             } else {
                 throw new RuntimeException("Invalid User Model Object");
             }

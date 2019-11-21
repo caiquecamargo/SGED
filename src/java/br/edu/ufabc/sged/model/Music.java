@@ -11,6 +11,6 @@ package br.edu.ufabc.sged.model;
  */
 public class Music extends Item{
     public Music(){
-        this.setTipo("Music");
+        super.setTipo("MUSIC");
     }
 }

@@ -12,6 +12,6 @@ package br.edu.ufabc.sged.model;
 public class PDF extends Item{
     
     public PDF(){
-        this.setTipo("PDF");
+        super.setTipo("PDF");
     }
 }

@@ -18,8 +18,8 @@ public class Usuario implements java.io.Serializable{
     private String  senha;
     private int     nivel_de_acesso;
     private int     situacao;
-    private List<Grupo>  grupo;
-    private List<Item> itens;
+    private List<Object>  grupo;
+    private List<Object> itens;
 
     /**
      * @return the id
@@ -94,28 +94,28 @@ public class Usuario implements java.io.Serializable{
     /**
      * @return the grupo
      */
-    public List<Grupo> getGrupo() {
+    public List<Object> getGrupo() {
         return grupo;
     }
 
     /**
      * @param grupo the grupo to set
      */
-    public void setGrupo(List<Grupo> grupo) {
+    public void setGrupo(List<Object> grupo) {
         this.grupo = grupo;
     }
 
     /**
      * @return the itens
      */
-    public List<Item> getItens() {
+    public List<Object> getItens() {
         return itens;
     }
 
     /**
      * @param itens the itens to set
      */
-    public void setItens(List<Item> itens) {
+    public void setItens(List<Object> itens) {
         this.itens = itens;
     }
 

@@ -11,6 +11,6 @@ package br.edu.ufabc.sged.model;
  */
 public class Doc extends Item{
     public Doc(){
-        this.setTipo("Doc");
+        super.setTipo("DOC");
     }
 }

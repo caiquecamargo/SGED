@@ -29,7 +29,7 @@
         <li class="mobile"><a href="edituser">Editar Pessoas</a></li>
         <li id="blink"><p>Seja bem vindo ${usuario.getNome()}</p></li>
         <li><a href="minhaconta">Minha conta</a></li>
-        <li><a href="logout">Logout</a></li>
+        <li><a href="logoutservlet">Logout</a></li>
       </ul>
     </header>
     <nav class="nav">
@@ -44,24 +44,43 @@
     </nav>
         <main class="content">
             <c:if test="${pagina == 'adicionar item'}">
+                <h1 class="titulo">Adicionar novos itens</h1>
                 <form action="fileuploadservlet" method="POST" enctype="multipart/form-data" class="draganddrop">
                     <input type="file" name="file">
                     <input type="text" placeholder="Restricoes" name="txt_restricoes">
                     <button type="submit">Enviar</button>
                 </form>
-                <!--<form action="fileuploadservlet" class="dropzone"></form>-->
-                <!-- <form action="additem" method="POST">
-                  <input type="text" placeholder="Tipo" name="txt_tipo">
-                  <input type="text" placeholder="Nome" name="txt_nome">
-                  <input type="text" placeholder="Restri��es" name="txt_restricoes">
-                  <button type="submit">Enviar</button>
-                </form> -->
             </c:if>
             <c:if test="${pagina == 'visualizar item'}">
-                <h1>Visuzalizar item</h1>
+                <h1 class="titulo">Seus arquivos</h1>
+                <div class="lista-item">
+                    <div class="trigger-wrapper">
+                        <div class="trigger-label">
+                            <h3 class="column-name">Nome</h3>
+                            <h3 class="column-name">Tipo</h3>
+                            <h3 class="column-name">SRC</h3>
+                        </div>
+                    </div>
+                </div>
+                <c:forEach var="item" items="${objectList}">
+                    <div class="lista-item">
+                        <input type="checkbox" class="trigger-input" id="${item.getId()}">
+                        <div class="trigger-wrapper">
+                            <label for="${item.getId()}" class="trigger-label">
+                                <h3 class="trigger-nome">${item.getNome()}</h3>
+                                <h3 class="trigger-tipo">${item.getTipo()}</h3>
+                                <h3 class="trigger-src">${item.getSrc()}</h3>
+                            </label>
+                            <form action="excluiritem" method="POST" class="form-trigger">
+                                <button class="trigger-conteudo" type="submit">Excluir</button>
+                            </form>
+                        </div>
+                    </div>
+                </c:forEach>
             </c:if>
             <c:if test="${pagina == 'adicionar grupo'}">
-                <form action="addgroup" method="POST">
+                <h1 class="titulo">Adicionar novos grupos</h1>
+                <form action="addgroup" method="POST" class="addgroup">
                   <input type="text" placeholder="Nome" name="txt_nome">
                   <input type="text" placeholder="Descricao" name="txt_descricao">
                   <input type="number" placeholder="Nivel" name="txt_nivel">
@@ -69,17 +88,62 @@
                 </form>
             </c:if>
             <c:if test="${pagina == 'editar grupo'}">
+                <h1 class="titulo">Seus grupos</h1>
+                <div class="lista-item">
+                    <div class="trigger-wrapper">
+                        <div class="trigger-label">
+                            <h3 class="column-name">Nome</h3>
+                            <h3 class="column-name">Nivel</h3>
+                            <h3 class="column-name">Descricao</h3>
+                        </div>
+                    </div>
+                </div>
                 <c:forEach var="grupo" items="${objectList}">
-                    <p>${grupo.getNome()}</p>
+                    <div class="lista-item">
+                        <input type="checkbox" class="trigger-input" id="${grupo.getId()}">
+                        <div class="trigger-wrapper">
+                            <label for="${grupo.getId()}" class="trigger-label">
+                                <h3 class="trigger-nome">${grupo.getNome()}</h3>
+                                <h3 class="trigger-tipo">${grupo.getNivel()}</h3>
+                                <h3 class="trigger-src">${grupo.getDescricao()}</h3>
+                            </label>
+                            <form action="excluiritem" method="POST" class="form-trigger">
+                                <button class="trigger-conteudo" type="submit">Visualizar membros do grupo</button>
+                                <button class="trigger-conteudo" type="submit">Excluir</button>
+                            </form>
+                        </div>
+                    </div>
                 </c:forEach>
             </c:if>
             <c:if test="${pagina == 'adicionar usuario'}">
+                <h1 class="titulo">Seus grupos</h1>
+                <div class="lista-item">
+                    <div class="trigger-wrapper">
+                        <div class="trigger-label">
+                            <h3 class="column-name">Nome</h3>
+                            <h3 class="column-name">Situacao</h3>
+                            <h3 class="column-name">Email</h3>
+                        </div>
+                    </div>
+                </div>
                 <c:forEach var="user" items="${objectList}">
-                    <p>${user.getNome()}</p>
+                    <div class="lista-item">
+                        <input type="checkbox" class="trigger-input" id="${user.getId()}">
+                        <div class="trigger-wrapper">
+                            <label for="${user.getId()}" class="trigger-label">
+                                <h3 class="trigger-nome">${user.getNome()}</h3>
+                                <h3 class="trigger-tipo"><c:if test="${user.getSituacao() == 0}">Nao habilitado</c:if><c:if test="${user.getSituacao() == 1}">Habilitado</c:if></h3>
+                                <h3 class="trigger-src">${user.getEmail()}</h3>
+                            </label>
+                            <form action="habilitarusuario" method="POST" class="form-trigger">
+                                <button class="trigger-conteudo" type="submit">Habilitar</button>
+                            </form>
+                        </div>
+                    </div>
                 </c:forEach>
             </c:if>
             <c:if test="${pagina == 'editar usuario'}">
-                <h1>Editar Usuario</h1>
+                <h1 class="titulo">Editar Usuario</h1>
             </c:if>
             <div class="log"><p>Log: ${errorSTR}</p></div>
         </main>

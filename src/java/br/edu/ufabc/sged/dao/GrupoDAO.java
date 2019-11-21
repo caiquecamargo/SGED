@@ -65,30 +65,5 @@ public class GrupoDAO implements GenericDAO{
     @Override
     public List<Object> read(Object o) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-    
-    public Object readOnly(Object o){
-        try {
-            if(o instanceof Grupo){
-                Grupo grupo = (Grupo) o;
-                String SQL = "SELECT * FROM tblgrupo WHERE idGrupo = ?";
-                PreparedStatement stm = dataSource.getConnection().prepareStatement(SQL);
-                stm.setInt(1, grupo.getId());
-                ResultSet rs = stm.executeQuery();
-                if(rs.next()){
-                    grupo.setNome(rs.getString("nome"));
-                    grupo.setDescricao(rs.getString("descricao"));
-                    grupo.setNivel(rs.getInt("nivel"));
-                }
-                stm.close();
-                return grupo;
-            } else {
-                throw new RuntimeException("Invalid Group Model Object");
-            }
-        } catch (SQLException ex) {
-            System.err.println("Erro ao recuperar Grupo. "+ex.getMessage());
-            throw new RuntimeException("Erro ao recuperar Grupo.");
-        }
-    }
-    
+    }    
 }

@@ -45,11 +45,11 @@ public class EditGroup extends HttpServlet {
         UsuarioDAO usuariodao = new UsuarioDAO(datasource);
         
         try {
-            List<Object> list = usuariodao.readUsuarioGrupo(usuario);
+            usuario.setGrupo(usuariodao.readUsuarioGrupo(usuario));
             datasource.getConnection().close();
             request.setAttribute("errorSTR", "Grupos recuperados com sucesso");
             request.setAttribute("pagina", "editar grupo");
-            request.setAttribute("objectList", list);
+            request.setAttribute("objectList", usuario.getGrupo());
         } catch (RuntimeException e) {
             request.setAttribute("errorSTR", e.getMessage());
         } catch (SQLException ex){

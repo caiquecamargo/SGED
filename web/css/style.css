@@ -9,6 +9,25 @@ h1{
   color: #002D40;
 }
 
+h1:after{
+  content: "";
+  display: block;
+  margin: 5px auto 0 auto;
+  width: 30%;
+  height: 3px;
+  background: #002D40;
+}
+
+@media (max-width: 900px){
+  h1:after{
+    width: 100%;
+  }
+
+  h1{
+    font-size: 1.5em;
+  }
+}
+
 /* ESTRUTURA */
 
 .estrutura{
@@ -102,7 +121,7 @@ h1{
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 30px;
+  padding: 5px;
 }
 
 .footer p{
