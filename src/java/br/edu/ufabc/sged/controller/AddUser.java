@@ -10,6 +10,7 @@ import br.edu.ufabc.sged.dao.UsuarioDAO;
 import br.edu.ufabc.sged.model.Usuario;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 import java.util.List;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -37,22 +38,33 @@ public class AddUser extends HttpServlet {
             throws ServletException, IOException {
         Usuario usuario = (Usuario) request.getSession().getAttribute("usuario");
         String page = "/login.jsp";
+        System.out.println(request.getAttribute("errorSTR"));
         if (usuario != null){
             page = "/home.jsp";
             request.setAttribute("pagina", "adicionar usuario");
 
-            DataSource ds = new DataSource();
-            UsuarioDAO userDAO = new UsuarioDAO(ds);
-            List<Object> res = userDAO.readNotSettedUsers(usuario);
-            request.setAttribute("objectList", res);
-            System.out.println(res.size());
-            if (res == null){
-                request.setAttribute("errorSTR", "Não há novos usuários para serem validados");
-            } else {
-                request.setAttribute("errorSTR", "");
+            DataSource datasource = new DataSource();
+            UsuarioDAO userDAO = new UsuarioDAO(datasource);
+            try{
+                List<Object> res = userDAO.readNotSettedUsers(usuario);
+                request.setAttribute("objectList", res);
+                System.out.println(res.size());
+                if (res == null){
+                    request.setAttribute("errorSTR", "Não há novos usuários para serem validados");
+                } else {
+                    request.setAttribute("errorSTR", "");
+                }
+                datasource.getConnection().close();
+            } catch (RuntimeException e){
+                System.err.println(e.getMessage());
+                request.setAttribute("errorSTR", e.getMessage());
+            } catch (SQLException ex) {
+                System.err.println(ex.getMessage());
+                request.setAttribute("errorSTR", ex.getMessage());
             }
         } else {
             request.setAttribute("errorSTR", "Sessão expirada");
+            page = "/indexServlet";
         }
 
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(page);

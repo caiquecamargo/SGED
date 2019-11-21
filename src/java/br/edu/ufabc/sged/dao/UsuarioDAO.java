@@ -64,10 +64,9 @@ public class UsuarioDAO implements GenericDAO{
         try{
             if(o instanceof Usuario){
                 Usuario incompleto = (Usuario) o;
-                String SQL = "SELECT * FROM tblusuario WHERE email = ? AND senha = ?";
+                String SQL = "SELECT * FROM tblusuario WHERE idUsuario = ?";
                 PreparedStatement stm = dataSource.getConnection().prepareStatement(SQL);
-                stm.setString(1, incompleto.getEmail());
-                stm.setString(2, incompleto.getSenha());
+                stm.setInt(1, incompleto.getId());
                 ResultSet rs = stm.executeQuery();
                 ArrayList<Object> result = new ArrayList<Object>();
                 if (rs.next()){
@@ -100,6 +99,38 @@ public class UsuarioDAO implements GenericDAO{
     @Override
     public void delete(Object o) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    public List<Object> login(Object o) {
+        try{
+            if(o instanceof Usuario){
+                Usuario incompleto = (Usuario) o;
+                String SQL = "SELECT * FROM tblusuario WHERE email = ? AND senha = ?";
+                PreparedStatement stm = dataSource.getConnection().prepareStatement(SQL);
+                stm.setString(1, incompleto.getEmail());
+                stm.setString(2, incompleto.getSenha());
+                ResultSet rs = stm.executeQuery();
+                ArrayList<Object> result = new ArrayList<Object>();
+                if (rs.next()){
+                    Usuario usuario = new Usuario();
+                    usuario.setId(rs.getInt("idUsuario"));
+                    usuario.setNome(rs.getString("nome"));
+                    usuario.setEmail(rs.getString("email"));
+                    usuario.setSenha(rs.getString("senha"));
+                    usuario.setNivel_de_acesso(rs.getInt("nivelDeAcesso"));
+                    usuario.setSituacao(rs.getInt("situacao"));
+                    result.add(usuario);
+                }
+                stm.close();
+                rs.close();
+                return result;
+            }else{
+                throw new RuntimeException("Invalid Object");
+            }
+        }catch(SQLException ex){
+            System.out.println("Erro ao recuperar Usuario - "+ex.getMessage());
+        }
+        return null;
     }
     
     public List<Object> readNotSettedUsers(Object o){
@@ -243,4 +274,22 @@ public class UsuarioDAO implements GenericDAO{
         }
     }
     
+    public void enableUser(Object o){
+        try {
+            if(o instanceof Usuario){
+                Usuario user = (Usuario) o;
+                String SQL = "UPDATE tblusuario SET situacao = 1, nivelDeAcesso = ? WHERE idUsuario = ?";
+                PreparedStatement stm = dataSource.getConnection().prepareStatement(SQL);
+                stm.setInt(1, user.getNivel_de_acesso());
+                stm.setInt(2, user.getId());
+                stm.executeUpdate();
+                stm.close();
+            } else {
+                throw new RuntimeException("Not a valid User Object");
+            }
+        } catch (SQLException ex) {
+            System.err.println("Erro ao habilitar usuário");
+            throw new RuntimeException("Erro ao habilitar, consulte admistrador do sistema");
+        }
+    }
 }

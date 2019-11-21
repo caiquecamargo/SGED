@@ -116,7 +116,7 @@
                 </c:forEach>
             </c:if>
             <c:if test="${pagina == 'adicionar usuario'}">
-                <h1 class="titulo">Seus grupos</h1>
+                <h1 class="titulo">Habilitar Usuario</h1>
                 <div class="lista-item">
                     <div class="trigger-wrapper">
                         <div class="trigger-label">
@@ -136,6 +136,8 @@
                                 <h3 class="trigger-src">${user.getEmail()}</h3>
                             </label>
                             <form action="habilitarusuario" method="POST" class="form-trigger">
+                                <input value="${user.getId()}" name="txt_id_usuario" class="notdisplay">
+                                <input type="number" min="${user.getNivel_de_acesso()}" placeholder="Nivel de acesso" name="txt_nivel_de_acesso">
                                 <button class="trigger-conteudo" type="submit">Habilitar</button>
                             </form>
                         </div>

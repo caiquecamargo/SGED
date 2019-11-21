@@ -238,6 +238,7 @@
   line-height: 1.4em;
   display: none;
   cursor: pointer;
+  margin-right: 5px;
 }
 
 .trigger-conteudo:hover{
@@ -248,6 +249,15 @@
 
 .column-name {
   padding: 10px;
+  font-size: 1.25rem;
+  font-style: bold;
+  font-family: Georgia, serif;
+  color: #fff;
+  text-align: left;
+}
+
+.column-name + .column-name {
+  padding: 10px 10px 10px 5px;
   font-size: 1.25rem;
   font-style: bold;
   font-family: Georgia, serif;
@@ -285,4 +295,8 @@
 
 .addgroup button:hover{
   background: red;
+}
+
+.notdisplay{
+  display: none;
 }

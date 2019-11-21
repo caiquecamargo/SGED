@@ -3,16 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/Documentos/Google%20Drive/UFABC/PGC/Sistema%20GED/NetBeans/SGED/src/java/br/edu/ufabc/sged/controller/NewUser.java</file>
-            <file>file:/D:/Documentos/Google%20Drive/UFABC/PGC/Sistema%20GED/NetBeans/SGED/src/java/br/edu/ufabc/sged/dao/GenericDAO.java</file>
-            <file>file:/D:/Documentos/Google%20Drive/UFABC/PGC/Sistema%20GED/NetBeans/SGED/web/META-INF/context.xml</file>
-            <file>file:/D:/Documentos/Google%20Drive/UFABC/PGC/Sistema%20GED/NetBeans/SGED/web/home.jsp</file>
-            <file>file:/D:/Documentos/Google%20Drive/UFABC/PGC/Sistema%20GED/NetBeans/SGED/src/java/br/edu/ufabc/sged/controller/CreateUser.java</file>
-            <file>file:/D:/Documentos/Google%20Drive/UFABC/PGC/Sistema%20GED/NetBeans/SGED/web/index.jsp</file>
-            <file>file:/D:/Documentos/Google%20Drive/UFABC/PGC/Sistema%20GED/NetBeans/SGED/src/java/br/edu/ufabc/sged/dao/UsuarioDAO.java</file>
-            <file>file:/D:/Documentos/Google%20Drive/UFABC/PGC/Sistema%20GED/NetBeans/SGED/web/newuser.jsp</file>
-            <file>file:/D:/Documentos/Google%20Drive/UFABC/PGC/Sistema%20GED/NetBeans/SGED/src/java/br/edu/ufabc/sged/controller/IndexServlet.java</file>
-            <file>file:/D:/Documentos/Google%20Drive/UFABC/PGC/Sistema%20GED/NetBeans/SGED/src/java/br/edu/ufabc/sged/controller/LoginServlet.java</file>
+            <file>file:/D:/Documentos/GitHub/SGED/src/java/br/edu/ufabc/sged/controller/EditUser.java</file>
+            <file>file:/D:/Documentos/GitHub/SGED/src/java/br/edu/ufabc/sged/controller/AddUser.java</file>
+            <file>file:/D:/Documentos/GitHub/SGED/src/java/br/edu/ufabc/sged/controller/HabilitarUSuario.java</file>
+            <file>file:/D:/Documentos/GitHub/SGED/src/java/br/edu/ufabc/sged/controller/LogoutServlet.java</file>
         </group>
     </open-files>
 </project-private>

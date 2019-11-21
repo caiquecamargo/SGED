@@ -40,7 +40,7 @@ public class LoginServlet extends HttpServlet {
         try {
             DataSource ds = new DataSource();
             UsuarioDAO userDAO = new UsuarioDAO(ds);
-            List<Object> res = userDAO.read(incompleto);
+            List<Object> res = userDAO.login(incompleto);
             if (res != null && res.size()>0){
                 Usuario usuario = (Usuario) res.get(0);
                 if(usuario.getSituacao() != 0){
@@ -49,7 +49,6 @@ public class LoginServlet extends HttpServlet {
                     request.getSession().setAttribute("usuario", usuario);
                     request.setAttribute("errorSTR", "");
                     request.setAttribute("pagina", "");
-                    //res = null;
                     request.setAttribute("objectList", res);
                 } else {
                     request.setAttribute("errorSTR", "Usuario ainda não validado, consulte seu superior direto");
@@ -60,7 +59,8 @@ public class LoginServlet extends HttpServlet {
             ds.getConnection().close();
         } catch (Exception e) {
             request.setAttribute("errorSTR", "Erro ao recuperar");
-        }         
+        }        
+        
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(page);
         dispatcher.forward(request, response);
     }
