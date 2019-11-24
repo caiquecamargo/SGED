@@ -39,7 +39,7 @@ CREATE TABLE `tblgrupo` (
 
 LOCK TABLES `tblgrupo` WRITE;
 /*!40000 ALTER TABLE `tblgrupo` DISABLE KEYS */;
-INSERT INTO `tblgrupo` VALUES (1,'Criação de server TOMCAT','Criar Server TOMCAT ',2),(2,'Server TOMCAT','Criar Server TOMCAT ',2),(3,'Grupo Teste','Teste',1);
+INSERT INTO `tblgrupo` VALUES (2,'Criar Server TOMCAT','Criação do Server TOMCAT',2);
 /*!40000 ALTER TABLE `tblgrupo` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -57,7 +57,7 @@ CREATE TABLE `tblitem` (
   `restricoes` varchar(1000) DEFAULT NULL,
   `src` varchar(1000) DEFAULT NULL,
   PRIMARY KEY (`idItem`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -66,6 +66,7 @@ CREATE TABLE `tblitem` (
 
 LOCK TABLES `tblitem` WRITE;
 /*!40000 ALTER TABLE `tblitem` DISABLE KEYS */;
+INSERT INTO `tblitem` VALUES (6,'PDF','Portal de Clientes.pdf','','D:\\Documentos\\Google Drive\\UFABC\\PGC\\Sistema GED\\NetBeans\\SGED\\build\\web\\uploads\\4\\PDF\\Portal de Clientes.pdf'),(7,'PDF','1720238920.pdf','','D:\\Documentos\\Google Drive\\UFABC\\PGC\\Sistema GED\\NetBeans\\SGED\\build\\web\\uploads\\4\\PDF\\1720238920.pdf'),(8,'PDF','Portal de Clientes.pdf','','D:\\Documentos\\GitHub\\SGED\\build\\web\\uploads\\2\\PDF\\Portal de Clientes.pdf');
 /*!40000 ALTER TABLE `tblitem` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -94,7 +95,7 @@ CREATE TABLE `tblusuario` (
 
 LOCK TABLES `tblusuario` WRITE;
 /*!40000 ALTER TABLE `tblusuario` DISABLE KEYS */;
-INSERT INTO `tblusuario` VALUES (1,'Professor Isidro','isidro@professorisidro.com.br','1234',0,1),(2,'Caique de Camargo','caique.de.camargo@hotmail.com','1234',0,1),(3,'Giovanna Murakami de Oliveira','giovanna.murakami@gmail.com','1234',0,1),(4,'teste','teste@teste.com','1234',1,1),(13,'Teste 2','teste2@teste.com','teste',NULL,0),(14,'Teste 3','teste3@teste.com','1234',NULL,0);
+INSERT INTO `tblusuario` VALUES (2,'Caique de Camargo','caique.de.camargo@hotmail.com','1234',0,1),(4,'teste','teste@teste.com','1234',1,1),(13,'Teste 2','teste2@teste.com','teste',0,0),(14,'Teste 3','teste3@teste.com','1234',0,1);
 /*!40000 ALTER TABLE `tblusuario` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -121,7 +122,7 @@ CREATE TABLE `tblusuariogrupo` (
 
 LOCK TABLES `tblusuariogrupo` WRITE;
 /*!40000 ALTER TABLE `tblusuariogrupo` DISABLE KEYS */;
-INSERT INTO `tblusuariogrupo` VALUES (2,2),(2,3);
+INSERT INTO `tblusuariogrupo` VALUES (2,2),(4,2);
 /*!40000 ALTER TABLE `tblusuariogrupo` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -148,6 +149,7 @@ CREATE TABLE `tblusuarioitem` (
 
 LOCK TABLES `tblusuarioitem` WRITE;
 /*!40000 ALTER TABLE `tblusuarioitem` DISABLE KEYS */;
+INSERT INTO `tblusuarioitem` VALUES (4,6),(4,7),(2,8);
 /*!40000 ALTER TABLE `tblusuarioitem` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -160,4 +162,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-11-18 13:51:27
+-- Dump completed on 2019-11-24 19:40:49
