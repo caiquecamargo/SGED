@@ -14,7 +14,6 @@
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="css/home.css">
 <link rel="stylesheet" href="css/menu.css">
-<link rel="stylesheet" href="css/dropzone.css">
 </head>
 <body>
   <div class="estrutura">
@@ -25,10 +24,10 @@
         <li class="mobile"><a href="viewitem">Visualizar itens</a></li>
         <li class="mobile"><a href="addgroup">Adicionar grupos</a></li>
         <li class="mobile"><a href="editgroup">Editar grupos</a></li>
-        <li class="mobile"><a href="adduser">Adicionar Pessoas</a></li>
-        <li class="mobile"><a href="edituser">Editar Pessoas</a></li>
+        <li class="mobile"><a href="adduser">Habilitar Usuario</a></li>
+        <li class="mobile"><a href="edituser">Editar Usuario</a></li>
         <li id="blink"><p>Seja bem vindo ${usuario.getNome()}</p></li>
-        <li><a href="minhaconta">Minha conta</a></li>
+        <li><a href="myaccount">Minha conta</a></li>
         <li><a href="logoutservlet">Logout</a></li>
       </ul>
     </header>
@@ -38,8 +37,8 @@
         <li><a href="viewitem">Visualizar itens</a></li>
         <li><a href="addgroup">Adicionar grupos</a></li>
         <li><a href="editgroup">Editar grupos</a></li>
-        <li><a href="adduser">Adicionar Pessoas</a></li>
-        <li><a href="edituser">Editar Pessoas</a></li>
+        <li><a href="adduser">Habilitar Usuario</a></li>
+        <li><a href="edituser">Editar Usuario</a></li>
       </ul>
     </nav>
         <main class="content">
@@ -71,7 +70,10 @@
                                 <h3 class="trigger-tipo">${item.getTipo()}</h3>
                                 <h3 class="trigger-src">${item.getSrc()}</h3>
                             </label>
-                            <form action="excluiritem" method="POST" class="form-trigger">
+                            <form action="deleteitem" method="POST" class="form-trigger">
+                                <input value="${item.getId()}" name="txt_id_item" class="notdisplay">
+                                <input value="${item.getSrc()}" name="txt_src" class="notdisplay">
+                                <input value="${item.getTipo()}" name="txt_tipo" class="notdisplay">
                                 <button class="trigger-conteudo" type="submit">Excluir</button>
                             </form>
                         </div>
@@ -107,9 +109,50 @@
                                 <h3 class="trigger-tipo">${grupo.getNivel()}</h3>
                                 <h3 class="trigger-src">${grupo.getDescricao()}</h3>
                             </label>
-                            <form action="excluiritem" method="POST" class="form-trigger">
-                                <button class="trigger-conteudo" type="submit">Visualizar membros do grupo</button>
-                                <button class="trigger-conteudo" type="submit">Excluir</button>
+                            <form class="form-trigger">
+                                <input value="${grupo.getId()}" name="txt_id_grupo" class="notdisplay">
+                                <button class="trigger-conteudo" type="submit" formaction="editdatagroup" formmethod="GET">Editar</button>
+                                <button class="trigger-conteudo" type="submit" formaction="viewgroupmembers" formmethod="POST">Visualizar membros do grupo</button>
+                                <button class="trigger-conteudo" type="submit" formaction="deletegroup" formmethod="POST">Excluir</button>
+                            </form>
+                        </div>
+                    </div>
+                </c:forEach>
+            </c:if>
+            <c:if test="${pagina == 'editar dados do grupo'}">
+                <h1 class="titulo">Editar dados do grupo</h1>
+                <form action="editdatagroup" class="editform">
+                    <input value="${objectList[0].getId()}" name="txt_id_grupo" class="notdisplay">
+                    <input type="text" value="${objectList[0].getNome()}" name="txt_nome">
+                    <input type="text" value="${objectList[0].getDescricao()}" name="txt_descricao">
+                    <input type="number" value="${objectList[0].getNivel()}" name="txt_nivel">
+                    <button type="submit" formmethod="POST">Atualizar</button>
+                </form>
+            </c:if>
+            <c:if test="${pagina == 'usuario do grupo'}">
+                <h1 class="titulo">Usuários do Grupo</h1>
+                <div class="lista-item">
+                    <div class="trigger-wrapper">
+                        <div class="trigger-label">
+                            <h3 class="column-name">Nome</h3>
+                            <h3 class="column-name">Nivel de Acesso</h3>
+                            <h3 class="column-name">Email</h3>
+                        </div>
+                    </div>
+                </div>
+                <c:forEach var="user" items="${objectList}">
+                    <div class="lista-item">
+                        <input type="checkbox" class="trigger-input" id="${user.getId()}">
+                        <div class="trigger-wrapper">
+                            <label for="${user.getId()}" class="trigger-label">
+                                <h3 class="trigger-nome">${user.getNome()}</h3>
+                                <h3 class="trigger-tipo">${user.getNivel_de_acesso()}</h3>
+                                <h3 class="trigger-src">${user.getEmail()}</h3>
+                            </label>
+                            <form action="editdatauser" method="GET" class="form-trigger">
+                                <input value="${user.getId()}" name="txt_id_usuario" class="notdisplay">
+                                <c:if test="${usuario.getNivel_de_acesso() < user.getNivel_de_acesso()}"><button class="trigger-conteudo" type="submit">Editar</button></c:if>
+                                <c:if test="${usuario.getNivel_de_acesso() >= user.getNivel_de_acesso()}"><button class="trigger-conteudo" type="submit" disabled class="disabled">Editar</button></c:if>
                             </form>
                         </div>
                     </div>
@@ -146,6 +189,41 @@
             </c:if>
             <c:if test="${pagina == 'editar usuario'}">
                 <h1 class="titulo">Editar Usuario</h1>
+                <div class="lista-item">
+                    <div class="trigger-wrapper">
+                        <div class="trigger-label">
+                            <h3 class="column-name">Nome</h3>
+                            <h3 class="column-name">Nivel de Acesso</h3>
+                            <h3 class="column-name">Email</h3>
+                        </div>
+                    </div>
+                </div>
+                <c:forEach var="user" items="${objectList}">
+                    <div class="lista-item">
+                        <input type="checkbox" class="trigger-input" id="${user.getId()}">
+                        <div class="trigger-wrapper">
+                            <label for="${user.getId()}" class="trigger-label">
+                                <h3 class="trigger-nome">${user.getNome()}</h3>
+                                <h3 class="trigger-tipo">${user.getNivel_de_acesso()}</h3>
+                                <h3 class="trigger-src">${user.getEmail()}</h3>
+                            </label>
+                            <form action="editdatauser" method="GET" class="form-trigger">
+                                <input value="${user.getId()}" name="txt_id_usuario" class="notdisplay">
+                                <button class="trigger-conteudo" type="submit">Editar</button>
+                            </form>
+                        </div>
+                    </div>
+                </c:forEach>
+            </c:if>
+            <c:if test="${pagina == 'editar dados do usuario'}">
+            <h1 class="titulo">Editar dados do usuario</h1>
+            <form action="editdatauser" class="editform">
+                <input value="${objectList[0].getId()}" name="txt_id_usuario" class="notdisplay">
+                <input type="text" placeholder="${objectList[0].getNome()}" disabled>
+                <input type="text" placeholder="${objectList[0].getEmail()}" disabled>
+                <input type="number" placeholder="${objectList[0].getNivel_de_acesso()}" disabled>
+                <button type="submit" method="POST" disabled>Atualizar</button>
+            </form>
             </c:if>
             <div class="log"><p>Log: ${errorSTR}</p></div>
         </main>

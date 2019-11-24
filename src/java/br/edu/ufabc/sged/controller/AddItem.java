@@ -5,6 +5,7 @@
  */
 package br.edu.ufabc.sged.controller;
 
+import br.edu.ufabc.sged.model.Usuario;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -33,11 +34,18 @@ public class AddItem extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        Usuario usuario = (Usuario) request.getSession().getAttribute("usuario");
         String page = "/home.jsp";
-        ArrayList<Object> list = new ArrayList<Object>();
-        request.setAttribute("errorSTR", "");
-        request.setAttribute("pagina", "adicionar item");
-        request.setAttribute("objectList", list);
+        
+        if (usuario != null){
+            ArrayList<Object> list = new ArrayList<>();
+            request.setAttribute("errorSTR", "");
+            request.setAttribute("pagina", "adicionar item");
+            request.setAttribute("objectList", list);
+        } else {
+            request.setAttribute("errorSTR", "Sessão expirada");
+            page = "/index.jsp";
+        }
         
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(page);
         dispatcher.forward(request, response);

@@ -27,7 +27,7 @@
         <label class="underform">
           <p class="erro">${errorSTR}</p>
         </label>
-        <button>Enviar Solicitaï¿½ï¿½o</button>
+        <button>Enviar Solicitação</button>
       </form>
     </main>
     <footer class="footer">

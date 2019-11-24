@@ -17,7 +17,7 @@ import java.util.List;
  * @author Caique de Camargo
  */
 public class ItemDAO implements GenericDAO{
-    private DataSource dataSource;
+    private final DataSource dataSource;
     
     public ItemDAO (DataSource dataSource){
         this.dataSource = dataSource;
@@ -29,20 +29,20 @@ public class ItemDAO implements GenericDAO{
             if(o instanceof Item){
                 Item item = (Item) o;
                 String SQL = "INSERT INTO tblitem VALUES (null, ?, ?, ?, ?)";
-                PreparedStatement stm = dataSource.getConnection().prepareStatement(SQL, Statement.RETURN_GENERATED_KEYS);
-                stm.setString(1, item.getTipo());
-                stm.setString(2, item.getNome());
-                stm.setString(3, item.getRestricoes());
-                stm.setString(4, item.getSrc());
-                int res = stm.executeUpdate();
-                if (res != 0){
-                    ResultSet rs = stm.getGeneratedKeys();
-                    if (rs.next()){
-                        item.setId(rs.getInt(1));
+                try (PreparedStatement stm = dataSource.getConnection().prepareStatement(SQL, Statement.RETURN_GENERATED_KEYS)) {
+                    stm.setString(1, item.getTipo());
+                    stm.setString(2, item.getNome());
+                    stm.setString(3, item.getRestricoes());
+                    stm.setString(4, item.getSrc());
+                    int res = stm.executeUpdate();
+                    if (res != 0){
+                        try (ResultSet rs = stm.getGeneratedKeys()) {
+                            if (rs.next()){
+                                item.setId(rs.getInt(1));
+                            }
+                        }
                     }
-                    rs.close();
                 }
-                stm.close();
             } else {
                 throw new RuntimeException("Invalid Item Model Object");
             }
@@ -59,7 +59,21 @@ public class ItemDAO implements GenericDAO{
 
     @Override
     public void delete(Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            if(o instanceof Item){
+                Item item = (Item) o;
+                String SQL = "DELETE FROM tblitem where idItem = ?";
+                try (PreparedStatement stm = dataSource.getConnection().prepareStatement(SQL)) {
+                    stm.setInt(1, item.getId());
+                    stm.executeUpdate();
+                }
+            } else {
+                throw new RuntimeException("Invalid Item Model Object");
+            }
+        } catch (SQLException ex) {
+            System.err.println("Erro ao deletar item "+ex.getMessage() + " " + ex.getErrorCode());
+            throw new RuntimeException("Erro ao deletar item, contate administrador do sistema");
+        }
     }
 
     @Override
@@ -67,4 +81,21 @@ public class ItemDAO implements GenericDAO{
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
+    public void deleteRelationship(Object o){
+        try {
+            if(o instanceof Item){
+                Item item = (Item) o;
+                String SQL = "DELETE FROM tblusuarioitem where idItem = ?";
+                try (PreparedStatement stm = dataSource.getConnection().prepareStatement(SQL)) {
+                    stm.setInt(1, item.getId());
+                    stm.executeUpdate();
+                }
+            } else {
+                throw new RuntimeException("Invalid Item Model Object");
+            }
+        } catch (SQLException ex) {
+            System.err.println("Erro ao deletar item "+ex.getMessage() + " " + ex.getErrorCode());
+            throw new RuntimeException("Erro ao deletar item, contate administrador do sistema");
+        }
+    }
 }

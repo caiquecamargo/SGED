@@ -40,22 +40,32 @@ public class EditGroup extends HttpServlet {
             throws ServletException, IOException {
         String page = "/home.jsp";
         Usuario usuario = (Usuario) request.getSession().getAttribute("usuario");
+        ArrayList<Object> list = new ArrayList<>();
+        request.setAttribute("errorSTR", "");
+        request.setAttribute("pagina", "");
+        request.setAttribute("objectList", list);
         
-        DataSource datasource = new DataSource();
-        UsuarioDAO usuariodao = new UsuarioDAO(datasource);
+        if (usuario != null){
+            DataSource datasource = new DataSource();
+            UsuarioDAO usuariodao = new UsuarioDAO(datasource);
+            try {
+                usuario.setGrupo(usuariodao.readGrupoFromUsuario(usuario));
+                datasource.getConnection().close();
+                request.setAttribute("errorSTR", "Grupos recuperados com sucesso");
+                request.setAttribute("pagina", "editar grupo");
+                request.setAttribute("objectList", usuario.getGrupo());
+            } catch (RuntimeException e) {
+                request.setAttribute("errorSTR", e.getMessage());
+            } catch (SQLException ex){
+                System.err.println("Erro ao recuperar grupos. "+ex.getMessage());
+                request.setAttribute("errorSTR", "Erro Desconhecido ao recuperar Grupo. Contate admistrador do sistema");
+            }
+        } else {
+            request.setAttribute("errorSTR", "Sessão expirada");
+            page = "/index.jsp";
+        }
         
-        try {
-            usuario.setGrupo(usuariodao.readUsuarioGrupo(usuario));
-            datasource.getConnection().close();
-            request.setAttribute("errorSTR", "Grupos recuperados com sucesso");
-            request.setAttribute("pagina", "editar grupo");
-            request.setAttribute("objectList", usuario.getGrupo());
-        } catch (RuntimeException e) {
-            request.setAttribute("errorSTR", e.getMessage());
-        } catch (SQLException ex){
-            System.err.println("Erro ao recuperar grupos. "+ex.getMessage());
-            request.setAttribute("errorSTR", "Erro Desconhecido ao recuperar Grupo. Contate admistrador do sistema");
-        }        
+                
         
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(page);
         dispatcher.forward(request, response);

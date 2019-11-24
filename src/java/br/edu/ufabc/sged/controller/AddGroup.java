@@ -38,11 +38,18 @@ public class AddGroup extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        Usuario usuario = (Usuario) request.getSession().getAttribute("usuario");
         String page = "/home.jsp";
-        ArrayList<Object> list = new ArrayList<>();
-        request.setAttribute("errorSTR", "");
-        request.setAttribute("pagina", "adicionar grupo");
-        request.setAttribute("objectList", list);
+        
+        if (usuario != null){
+            ArrayList<Object> list = new ArrayList<>();
+            request.setAttribute("errorSTR", "");
+            request.setAttribute("pagina", "adicionar grupo");
+            request.setAttribute("objectList", list);
+        } else {
+            request.setAttribute("errorSTR", "Sessão expirada");
+            page = "/index.jsp";
+        }
         
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(page);
         dispatcher.forward(request, response);
@@ -76,7 +83,7 @@ public class AddGroup extends HttpServlet {
             grupodao.create(grupo);
             Usuario usuario = (Usuario) request.getSession().getAttribute("usuario");
             UsuarioDAO userdao = new UsuarioDAO(datasource);
-            userdao.setUsuarioGrupo(usuario, grupo);
+            userdao.setGrupoFromUsuario(usuario, grupo);
             ArrayList<Object> list = new ArrayList<>();
             request.setAttribute("errorSTR", "Grupo adicionado com sucesso");
             request.setAttribute("pagina", "adicionar grupo");

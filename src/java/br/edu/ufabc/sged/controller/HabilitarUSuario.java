@@ -61,31 +61,35 @@ public class HabilitarUSuario extends HttpServlet {
         
         String page = "/home.jsp";
         
-        Usuario incompleto = new Usuario();
-        incompleto.setId(idEnableUsuario);
-        incompleto.setNivel_de_acesso(nivel_de_acesso);
-        DataSource datasource = new DataSource();
-        UsuarioDAO userDAO = new UsuarioDAO(datasource);
-        
-        try{
-            List<Object> res = userDAO.read(incompleto);
-            if (res.size() > 0){
-                Usuario enableUser = (Usuario) res.get(0);
-                if (usuario.getNivel_de_acesso() > enableUser.getNivel_de_acesso() || usuario.getNivel_de_acesso() == 0) {
-                    userDAO.enableUser(enableUser);
-                    request.setAttribute("errorSTR", "Usuário habilitado com sucesso");
+        if (usuario != null){
+            Usuario incompleto = new Usuario();
+            incompleto.setId(idEnableUsuario);
+            incompleto.setNivel_de_acesso(nivel_de_acesso);
+            DataSource datasource = new DataSource();
+            UsuarioDAO userDAO = new UsuarioDAO(datasource);    
+            try{
+                List<Object> res = userDAO.read(incompleto);
+                if (res.size() > 0){
+                    Usuario enableUser = (Usuario) res.get(0);
+                    if (usuario.getNivel_de_acesso() > enableUser.getNivel_de_acesso() || usuario.getNivel_de_acesso() == 0) {
+                        userDAO.enableUser(enableUser);
+                        request.setAttribute("errorSTR", "Usuário habilitado com sucesso");
+                    } else {
+                        request.setAttribute("errorSTR", "Sem autorização para realizar tarefa");
+                    }
                 } else {
-                    request.setAttribute("errorSTR", "Sem autorização para realizar tarefa");
+                    System.err.println("Erro ao habilitar usuario");
+                    request.setAttribute("errorSTR", "Erro ao habilitar usuario, contate administrador do sistema");
+                    request.setAttribute("pagina", "adicionar usuario");
                 }
-            } else {
-                System.err.println("Erro ao habilitar usuario");
+            } catch (Exception e){
+                System.err.println("Erro ao habilitar usuario. " + e.getMessage());
                 request.setAttribute("errorSTR", "Erro ao habilitar usuario, contate administrador do sistema");
                 request.setAttribute("pagina", "adicionar usuario");
             }
-        } catch (Exception e){
-            System.err.println("Erro ao habilitar usuario. " + e.getMessage());
-            request.setAttribute("errorSTR", "Erro ao habilitar usuario, contate administrador do sistema");
-            request.setAttribute("pagina", "adicionar usuario");
+        } else {
+            request.setAttribute("errorSTR", "Sessão expirada");
+            page = "/index.jsp";
         }
         
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(page);

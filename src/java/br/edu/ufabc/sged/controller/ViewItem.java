@@ -40,21 +40,29 @@ public class ViewItem extends HttpServlet {
             throws ServletException, IOException {
         String page = "/home.jsp";
         Usuario usuario = (Usuario) request.getSession().getAttribute("usuario");
+        ArrayList<Object> list = new ArrayList<>();
+        request.setAttribute("errorSTR", "");
+        request.setAttribute("pagina", "");
+        request.setAttribute("objectList", list);
         
-        DataSource datasource = new DataSource();
-        UsuarioDAO usuariodao = new UsuarioDAO(datasource);
-        
-        try {
-            usuario.setItens(usuariodao.readUsuarioItem(usuario));
-            datasource.getConnection().close();
-            request.setAttribute("errorSTR", "Itens recuperados com sucesso");
-            request.setAttribute("pagina", "visualizar item");
-            request.setAttribute("objectList", usuario.getItens());
-        } catch (RuntimeException e) {
-            request.setAttribute("errorSTR", e.getMessage());
-        } catch (SQLException ex){
-            System.err.println("Erro ao recuperar items. "+ex.getMessage());
-            request.setAttribute("errorSTR", "Erro Desconhecido ao recuperar Item. Contate admistrador do sistema");
+        if (usuario != null){
+            DataSource datasource = new DataSource();
+            UsuarioDAO usuariodao = new UsuarioDAO(datasource);
+            try {
+                usuario.setItens(usuariodao.readUsuarioItem(usuario));
+                datasource.getConnection().close();
+                request.setAttribute("errorSTR", "Itens recuperados com sucesso");
+                request.setAttribute("pagina", "visualizar item");
+                request.setAttribute("objectList", usuario.getItens());
+            } catch (RuntimeException e) {
+                request.setAttribute("errorSTR", e.getMessage());
+            } catch (SQLException ex){
+                System.err.println("Erro ao recuperar items. "+ex.getMessage());
+                request.setAttribute("errorSTR", "Erro Desconhecido ao recuperar Item. Contate admistrador do sistema");
+            }
+        } else {
+            request.setAttribute("errorSTR", "Sessão expirada");
+            page = "/index.jsp";
         }
         
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(page);

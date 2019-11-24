@@ -5,9 +5,14 @@
  */
 package br.edu.ufabc.sged.controller;
 
+import br.edu.ufabc.sged.dao.DataSource;
+import br.edu.ufabc.sged.dao.UsuarioDAO;
+import br.edu.ufabc.sged.model.Usuario;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -31,12 +36,31 @@ public class EditUser extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException {      
+        Usuario usuario = (Usuario) request.getSession().getAttribute("usuario");
         String page = "/home.jsp";
-        ArrayList<Object> list = new ArrayList<Object>();
+        ArrayList<Object> list = new ArrayList<>();
         request.setAttribute("errorSTR", "");
         request.setAttribute("pagina", "editar usuario");
         request.setAttribute("objectList", list);
+        
+        if (usuario != null){
+            DataSource datasource = new DataSource();
+            UsuarioDAO userDAO = new UsuarioDAO(datasource);
+            
+            try {
+                List<Object> result = userDAO.readUsuarioFromGrupo(usuario);
+                datasource.getConnection().close();
+                request.setAttribute("objectList", result);
+                request.setAttribute("errorSTR", "Usuários recuperados com sucesso.");
+            } catch (SQLException ex) {
+                System.err.println("Erro ao fechar conexão. "+ex.getMessage());
+                request.setAttribute("errorSTR", "Erro ao recuperar usuários");
+            }
+        } else {
+            request.setAttribute("errorSTR", "Sessão expirada");
+            page = "/index.jsp";
+        }
         
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(page);
         dispatcher.forward(request, response);

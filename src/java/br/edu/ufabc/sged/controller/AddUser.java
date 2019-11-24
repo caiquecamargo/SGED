@@ -11,6 +11,7 @@ import br.edu.ufabc.sged.model.Usuario;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -37,10 +38,13 @@ public class AddUser extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         Usuario usuario = (Usuario) request.getSession().getAttribute("usuario");
-        String page = "/login.jsp";
-        System.out.println(request.getAttribute("errorSTR"));
+        String page = "/home.jsp";
+        ArrayList<Object> list = new ArrayList<>();
+        request.setAttribute("errorSTR", "");
+        request.setAttribute("pagina", "");
+        request.setAttribute("objectList", list);
+        
         if (usuario != null){
-            page = "/home.jsp";
             request.setAttribute("pagina", "adicionar usuario");
 
             DataSource datasource = new DataSource();
@@ -48,11 +52,10 @@ public class AddUser extends HttpServlet {
             try{
                 List<Object> res = userDAO.readNotSettedUsers(usuario);
                 request.setAttribute("objectList", res);
-                System.out.println(res.size());
                 if (res == null){
                     request.setAttribute("errorSTR", "Não há novos usuários para serem validados");
                 } else {
-                    request.setAttribute("errorSTR", "");
+                    request.setAttribute("errorSTR", "Usuários recuperados com sucesso.");
                 }
                 datasource.getConnection().close();
             } catch (RuntimeException e){
@@ -64,7 +67,7 @@ public class AddUser extends HttpServlet {
             }
         } else {
             request.setAttribute("errorSTR", "Sessão expirada");
-            page = "/indexServlet";
+            page = "/index.jsp";
         }
 
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(page);

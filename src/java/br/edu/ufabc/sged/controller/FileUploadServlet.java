@@ -55,61 +55,72 @@ public class FileUploadServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        
+        ArrayList<Object> list = new ArrayList<>();
+        request.setAttribute("errorSTR", "");
+        request.setAttribute("pagina", "");
+        request.setAttribute("objectList", list);
+        
         Usuario usuario = (Usuario) request.getSession().getAttribute("usuario");
         String applicationPath = request.getServletContext().getRealPath("");
         String uploadFilePath  = applicationPath + UPLOAD_DIR + File.separator + usuario.getId();
         
-        Item item = null;
-        Part part = request.getPart("file");               
-        String[] header = part.getHeader("content-type").split("/");
-        if(header[0].equals("application")){
-            if(header[1].equals("pdf")){
-                item = new PDF();
-            } else if (header[1].equals("doc") || header[1].equals("docx")) {
-                item = new Doc();
-            }
-        } else if (header[0].equals("image")){
-            item = new Image();
-        } else if (header[0].equals("audio")){
-            item = new Music();
-        }
+        String page = "/home.jsp";
         
-        if(item != null){
-            uploadFilePath += File.separator + item.getTipo();
-            File fileSaveDir = new File(uploadFilePath);
-            if(!fileSaveDir.exists()){
-                fileSaveDir.mkdirs();
+        if (usuario != null){
+            Item item = null;
+            Part part = request.getPart("file");               
+            String[] header = part.getHeader("content-type").split("/");
+            if(header[0].equals("application")){
+                if(header[1].equals("pdf")){
+                    item = new PDF();
+                } else if (header[1].equals("doc") || header[1].equals("docx")) {
+                    item = new Doc();
+                }
+            } else if (header[0].equals("image")){
+                item = new Image();
+            } else if (header[0].equals("audio")){
+                item = new Music();
             }
-            
-            item.setNome(part.getSubmittedFileName());
-            item.setRestricoes(request.getParameter("txt_restricoes"));
-            item.setSrc(uploadFilePath + File.separator + part.getSubmittedFileName());
-            
-            try{
-                DataSource dataSource = new DataSource();
-                ItemDAO itemDAO = new ItemDAO(dataSource);
-                itemDAO.create(item);
-                UsuarioDAO userDAO = new UsuarioDAO(dataSource);
-                userDAO.setUsuarioItem(usuario, item);
-                dataSource.getConnection().close();
-                
-                part.write(item.getSrc());
-                request.setAttribute("errorSTR", "Arquivo carregado com sucesso no caminho: " + item.getSrc());
-            } catch (RuntimeException e){
-                request.setAttribute("errorSTR", e.getMessage());
-            } catch (SQLException ex){
-                System.err.println("Erro ao fechar conexão. "+ex.getMessage());
-                request.setAttribute("errorSTR", "Erro ao inserir arquivo, contate administrado do sistema");
-            }
+
+            if(item != null){
+                uploadFilePath += File.separator + item.getTipo();
+                File fileSaveDir = new File(uploadFilePath);
+                if(!fileSaveDir.exists()){
+                    fileSaveDir.mkdirs();
+                }
+
+                item.setNome(part.getSubmittedFileName());
+                item.setRestricoes(request.getParameter("txt_restricoes"));
+                item.setSrc(uploadFilePath + File.separator + part.getSubmittedFileName());
+
+                try{
+                    DataSource dataSource = new DataSource();
+                    ItemDAO itemDAO = new ItemDAO(dataSource);
+                    itemDAO.create(item);
+                    UsuarioDAO userDAO = new UsuarioDAO(dataSource);
+                    userDAO.setUsuarioItem(usuario, item);
+                    dataSource.getConnection().close();
+
+                    part.write(item.getSrc());
+                    request.setAttribute("errorSTR", "Arquivo carregado com sucesso no caminho: " + item.getSrc());
+                } catch (RuntimeException e){
+                    request.setAttribute("errorSTR", e.getMessage());
+                } catch (SQLException ex){
+                    System.err.println("Erro ao fechar conexão. "+ex.getMessage());
+                    request.setAttribute("errorSTR", "Erro ao inserir arquivo, contate administrado do sistema");
+                }
+            } else {
+                request.setAttribute("errorSTR", "Não foi possível realizar o Upload, tipo de arquivo não suportado");
+            }    
         } else {
-            request.setAttribute("errorSTR", "Não foi possível realizar o Upload, tipo de arquivo não suportado");
+            request.setAttribute("errorSTR", "Sessão expirada");
+            page = "/index.jsp";
         }
-        
+
         request.setAttribute("pagina", "adicionar item");
-        ArrayList<Object> list = new ArrayList<>();
-        request.setAttribute("objectList", list);
         
-        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/home.jsp");
+        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(page);
         dispatcher.forward(request, response);
     }
     

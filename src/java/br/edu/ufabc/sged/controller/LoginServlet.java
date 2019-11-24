@@ -28,8 +28,6 @@ public class LoginServlet extends HttpServlet {
        
         String user = request.getParameter("txt_user");
         String password = request.getParameter("txt_password");
-        System.out.println(user);
-        System.out.println(password);
         
         Usuario incompleto = new Usuario();
         incompleto.setEmail(user);
@@ -45,7 +43,6 @@ public class LoginServlet extends HttpServlet {
                 Usuario usuario = (Usuario) res.get(0);
                 if(usuario.getSituacao() != 0){
                     page = "/home.jsp";
-                    if(usuario.getNome().equals("Giovanna Murakami de Oliveira")) page = "/gyh.jsp";
                     request.getSession().setAttribute("usuario", usuario);
                     request.setAttribute("errorSTR", "");
                     request.setAttribute("pagina", "");

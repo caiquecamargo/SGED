@@ -56,6 +56,34 @@
         <servlet-name>HabilitarUSuario</servlet-name>
         <servlet-class>br.edu.ufabc.sged.controller.HabilitarUSuario</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>DeleteGroup</servlet-name>
+        <servlet-class>br.edu.ufabc.sged.controller.DeleteGroup</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>DeleteItem</servlet-name>
+        <servlet-class>br.edu.ufabc.sged.controller.DeleteItem</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ViewGroupMembers</servlet-name>
+        <servlet-class>br.edu.ufabc.sged.controller.ViewGroupMembers</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>EditDataGroup</servlet-name>
+        <servlet-class>br.edu.ufabc.sged.controller.EditDataGroup</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>EditDataUser</servlet-name>
+        <servlet-class>br.edu.ufabc.sged.controller.EditDataUser</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Home</servlet-name>
+        <servlet-class>br.edu.ufabc.sged.controller.Home</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>MyAccount</servlet-name>
+        <servlet-class>br.edu.ufabc.sged.controller.MyAccount</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
         <url-pattern>/loginservlet</url-pattern>
@@ -111,6 +139,34 @@
     <servlet-mapping>
         <servlet-name>HabilitarUSuario</servlet-name>
         <url-pattern>/habilitarusuario</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DeleteGroup</servlet-name>
+        <url-pattern>/deletegroup</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DeleteItem</servlet-name>
+        <url-pattern>/deleteitem</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ViewGroupMembers</servlet-name>
+        <url-pattern>/viewgroupmembers</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EditDataGroup</servlet-name>
+        <url-pattern>/editdatagroup</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EditDataUser</servlet-name>
+        <url-pattern>/editdatauser</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Home</servlet-name>
+        <url-pattern>/home</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>MyAccount</servlet-name>
+        <url-pattern>/myaccount</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
