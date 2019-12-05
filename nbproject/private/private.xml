@@ -2,11 +2,6 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-            <file>file:/D:/Documentos/GitHub/SGED/src/java/br/edu/ufabc/sged/controller/EditUser.java</file>
-            <file>file:/D:/Documentos/GitHub/SGED/src/java/br/edu/ufabc/sged/controller/AddUser.java</file>
-            <file>file:/D:/Documentos/GitHub/SGED/src/java/br/edu/ufabc/sged/controller/HabilitarUSuario.java</file>
-            <file>file:/D:/Documentos/GitHub/SGED/src/java/br/edu/ufabc/sged/controller/LogoutServlet.java</file>
-        </group>
+        <group/>
     </open-files>
 </project-private>

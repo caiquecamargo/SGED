@@ -37,8 +37,8 @@
         <servlet-class>br.edu.ufabc.sged.controller.EditPerson</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>AddUser</servlet-name>
-        <servlet-class>br.edu.ufabc.sged.controller.AddUser</servlet-class>
+        <servlet-name>ValidateUser</servlet-name>
+        <servlet-class>br.edu.ufabc.sged.controller.ValidateUser</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>EditUser</servlet-name>
@@ -121,8 +121,8 @@
         <url-pattern>/editperson</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>AddUser</servlet-name>
-        <url-pattern>/adduser</url-pattern>
+        <servlet-name>ValidateUser</servlet-name>
+        <url-pattern>/validateuser</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>EditUser</servlet-name>

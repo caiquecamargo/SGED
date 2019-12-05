@@ -24,7 +24,7 @@
         <li class="mobile"><a href="viewitem">Visualizar itens</a></li>
         <li class="mobile"><a href="addgroup">Adicionar grupos</a></li>
         <li class="mobile"><a href="editgroup">Editar grupos</a></li>
-        <li class="mobile"><a href="validateuser">Habilitar Usuario</a></li>
+        <li class="mobile"><a href="adduser">Habilitar Usuario</a></li>
         <li class="mobile"><a href="edituser">Editar Usuario</a></li>
         <li id="blink"><p>Seja bem vindo ${usuario.getNome()}</p></li>
         <li><a href="myaccount">Minha conta</a></li>
@@ -37,11 +37,12 @@
         <li><a href="viewitem">Visualizar itens</a></li>
         <li><a href="addgroup">Adicionar grupos</a></li>
         <li><a href="editgroup">Editar grupos</a></li>
-        <li><a href="validateuser">Habilitar Usuario</a></li>
+        <li><a href="adduser">Habilitar Usuario</a></li>
         <li><a href="edituser">Editar Usuario</a></li>
       </ul>
     </nav>
         <main class="content">
+            ${pagina}
             <c:if test="${pagina == 'adicionar item'}">
                 <h1 class="titulo">Adicionar novos itens</h1>
                 <form action="fileuploadservlet" method="POST" enctype="multipart/form-data" class="draganddrop">
@@ -89,7 +90,7 @@
                   <button type="submit">Enviar</button>
                 </form>
             </c:if>
-            <c:if test="${pagina == 'visualizar grupos'}">
+            <c:if test="${pagina == 'editar grupo'}">
                 <h1 class="titulo">Seus grupos</h1>
                 <div class="lista-item">
                     <div class="trigger-wrapper">
@@ -119,7 +120,7 @@
                     </div>
                 </c:forEach>
             </c:if>
-            <c:if test="${pagina == 'editar grupo'}">
+            <c:if test="${pagina == 'editar dados do grupo'}">
                 <h1 class="titulo">Editar dados do grupo</h1>
                 <form action="editdatagroup" class="editform">
                     <input value="${objectList[0].getId()}" name="txt_id_grupo" class="notdisplay">
@@ -129,7 +130,7 @@
                     <button type="submit" formmethod="POST">Atualizar</button>
                 </form>
             </c:if>
-            <c:if test="${pagina == 'visualizar usuarios do grupo'}">
+            <c:if test="${pagina == 'usuario do grupo'}">
                 <h1 class="titulo">Usuários do Grupo</h1>
                 <div class="lista-item">
                     <div class="trigger-wrapper">
@@ -158,7 +159,7 @@
                     </div>
                 </c:forEach>
             </c:if>
-            <c:if test="${pagina == 'validar usuario'}">
+            <c:if test="${pagina == 'adicionar usuario'}">
                 <h1 class="titulo">Habilitar Usuario</h1>
                 <div class="lista-item">
                     <div class="trigger-wrapper">
@@ -187,7 +188,7 @@
                     </div>
                 </c:forEach>
             </c:if>
-            <c:if test="${pagina == 'visualizar usuarios'}">
+            <c:if test="${pagina == 'editar usuario'}">
                 <h1 class="titulo">Editar Usuario</h1>
                 <div class="lista-item">
                     <div class="trigger-wrapper">
@@ -215,7 +216,7 @@
                     </div>
                 </c:forEach>
             </c:if>
-            <c:if test="${pagina == 'editar usuario'}">
+            <c:if test="${pagina == 'editar dados do usuario'}">
             <h1 class="titulo">Editar dados do usuario</h1>
             <form action="editdatauser" class="editform">
                 <input value="${objectList[0].getId()}" name="txt_id_usuario" class="notdisplay">

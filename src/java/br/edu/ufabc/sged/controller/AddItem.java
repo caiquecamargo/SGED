@@ -6,10 +6,11 @@
 package br.edu.ufabc.sged.controller;
 
 import br.edu.ufabc.sged.model.Usuario;
+import br.edu.ufabc.sged.util.LOGMessage;
+import br.edu.ufabc.sged.util.Pages;
+import br.edu.ufabc.sged.util.Parameters;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.List;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -34,17 +35,17 @@ public class AddItem extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        Usuario usuario = (Usuario) request.getSession().getAttribute("usuario");
-        String page = "/home.jsp";
+        Usuario usuario = (Usuario) request.getSession().getAttribute(Parameters.SESSION_NAME);
+        String page = Pages.HOME;
         
         if (usuario != null){
             ArrayList<Object> list = new ArrayList<>();
-            request.setAttribute("errorSTR", "");
-            request.setAttribute("pagina", "adicionar item");
-            request.setAttribute("objectList", list);
+            request.setAttribute(Parameters.LOG, LOGMessage.NULL);
+            request.setAttribute(Parameters.PAGE_SELECTION, Pages.ADD_ITEM);
+            request.setAttribute(Parameters.OBJECT_LIST, list);
         } else {
-            request.setAttribute("errorSTR", "Sessão expirada");
-            page = "/index.jsp";
+            request.setAttribute(Parameters.LOG, LOGMessage.SESSION_EXPIRED);
+            page = Pages.INDEX;
         }
         
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(page);

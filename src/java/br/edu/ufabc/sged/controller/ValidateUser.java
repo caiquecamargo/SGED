@@ -8,8 +8,10 @@ package br.edu.ufabc.sged.controller;
 import br.edu.ufabc.sged.dao.DataSource;
 import br.edu.ufabc.sged.dao.UsuarioDAO;
 import br.edu.ufabc.sged.model.Usuario;
+import br.edu.ufabc.sged.util.LOGMessage;
+import br.edu.ufabc.sged.util.Pages;
+import br.edu.ufabc.sged.util.Parameters;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +25,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Caique de Camargo
  */
-public class AddUser extends HttpServlet {
+public class ValidateUser extends HttpServlet {
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
@@ -37,37 +39,32 @@ public class AddUser extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        Usuario usuario = (Usuario) request.getSession().getAttribute("usuario");
-        String page = "/home.jsp";
-        ArrayList<Object> list = new ArrayList<>();
-        request.setAttribute("errorSTR", "");
-        request.setAttribute("pagina", "");
-        request.setAttribute("objectList", list);
+        Usuario usuario = (Usuario) request.getSession().getAttribute(Parameters.SESSION_NAME);
+        String page = Pages.HOME;
         
         if (usuario != null){
-            request.setAttribute("pagina", "adicionar usuario");
+            request.setAttribute(Parameters.PAGE_SELECTION, Pages.VIEW_USERS);
 
             DataSource datasource = new DataSource();
             UsuarioDAO userDAO = new UsuarioDAO(datasource);
             try{
-                List<Object> res = userDAO.readNotSettedUsers(usuario);
-                request.setAttribute("objectList", res);
-                if (res == null){
-                    request.setAttribute("errorSTR", "Não há novos usuários para serem validados");
+                List<Object> notSettedUers = userDAO.readNotSettedUsers(usuario);
+                request.setAttribute(Parameters.OBJECT_LIST, notSettedUers);
+                if (notSettedUers == null){
+                    request.setAttribute(Parameters.LOG, LOGMessage.NO_USERS_TO_VALIDATE);
                 } else {
-                    request.setAttribute("errorSTR", "Usuários recuperados com sucesso.");
+                    request.setAttribute(Parameters.LOG, LOGMessage.USERS_SUCCEFULLY_RECOVERED);
                 }
                 datasource.getConnection().close();
-            } catch (RuntimeException e){
+            } catch (RuntimeException | SQLException e){
                 System.err.println(e.getMessage());
-                request.setAttribute("errorSTR", e.getMessage());
-            } catch (SQLException ex) {
-                System.err.println(ex.getMessage());
-                request.setAttribute("errorSTR", ex.getMessage());
+                request.setAttribute(Parameters.LOG, e.getMessage());
+                request.setAttribute(Parameters.PAGE_SELECTION, Pages.NULL);
+                request.setAttribute(Parameters.OBJECT_LIST, new ArrayList<>());
             }
         } else {
-            request.setAttribute("errorSTR", "Sessão expirada");
-            page = "/index.jsp";
+            request.setAttribute(Parameters.LOG, LOGMessage.SESSION_EXPIRED);
+            page = Pages.INDEX;
         }
 
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(page);

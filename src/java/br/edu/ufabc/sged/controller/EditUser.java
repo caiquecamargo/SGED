@@ -9,7 +9,6 @@ import br.edu.ufabc.sged.dao.DataSource;
 import br.edu.ufabc.sged.dao.UsuarioDAO;
 import br.edu.ufabc.sged.model.Usuario;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +40,7 @@ public class EditUser extends HttpServlet {
         String page = "/home.jsp";
         ArrayList<Object> list = new ArrayList<>();
         request.setAttribute("errorSTR", "");
-        request.setAttribute("pagina", "editar usuario");
+        request.setAttribute("pagina", "visualizar usuarios");
         request.setAttribute("objectList", list);
         
         if (usuario != null){

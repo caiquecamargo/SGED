@@ -10,8 +10,10 @@ import br.edu.ufabc.sged.dao.GrupoDAO;
 import br.edu.ufabc.sged.dao.UsuarioDAO;
 import br.edu.ufabc.sged.model.Grupo;
 import br.edu.ufabc.sged.model.Usuario;
+import br.edu.ufabc.sged.util.LOGMessage;
+import br.edu.ufabc.sged.util.Pages;
+import br.edu.ufabc.sged.util.Parameters;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import javax.servlet.RequestDispatcher;
@@ -38,17 +40,17 @@ public class AddGroup extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        Usuario usuario = (Usuario) request.getSession().getAttribute("usuario");
-        String page = "/home.jsp";
+        Usuario usuario = (Usuario) request.getSession().getAttribute(Parameters.SESSION_NAME);
+        String page = Pages.HOME;
         
         if (usuario != null){
             ArrayList<Object> list = new ArrayList<>();
-            request.setAttribute("errorSTR", "");
-            request.setAttribute("pagina", "adicionar grupo");
-            request.setAttribute("objectList", list);
+            request.setAttribute(Parameters.LOG, LOGMessage.NULL);
+            request.setAttribute(Parameters.PAGE_SELECTION, Pages.ADD_GROUP);
+            request.setAttribute(Parameters.OBJECT_LIST, list);
         } else {
-            request.setAttribute("errorSTR", "Sessão expirada");
-            page = "/index.jsp";
+            request.setAttribute(Parameters.LOG, LOGMessage.SESSION_EXPIRED);
+            page = Pages.INDEX;
         }
         
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(page);
@@ -66,33 +68,38 @@ public class AddGroup extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String page      = "/home.jsp";
-        String nome      = request.getParameter("txt_nome");
-        String descricao = request.getParameter("txt_descricao");
-        int    nivel     = Integer.parseInt(request.getParameter("txt_nivel"));
+        Usuario usuario = (Usuario) request.getSession().getAttribute(Parameters.SESSION_NAME);
+        String page     = Pages.HOME;
         
-        Grupo grupo = new Grupo();
-        grupo.setNome(nome);
-        grupo.setDescricao(descricao);
-        grupo.setNivel(nivel);
-        
-        DataSource datasource = new DataSource();
-        GrupoDAO   grupodao   = new GrupoDAO(datasource);
-        
-        try {
-            grupodao.create(grupo);
-            Usuario usuario = (Usuario) request.getSession().getAttribute("usuario");
-            UsuarioDAO userdao = new UsuarioDAO(datasource);
-            userdao.setGrupoFromUsuario(usuario, grupo);
-            ArrayList<Object> list = new ArrayList<>();
-            request.setAttribute("errorSTR", "Grupo adicionado com sucesso");
-            request.setAttribute("pagina", "adicionar grupo");
-            request.setAttribute("objectList", list);
-            datasource.getConnection().close();
-        } catch (RuntimeException e) {
-            request.setAttribute("errorStr", e.getMessage());
-        } catch (SQLException ex){
-            System.err.println("Erro ao adicionar grupo.  " +ex.getMessage());
+        if(usuario != null){
+            String nome      = request.getParameter("txt_nome");
+            String descricao = request.getParameter("txt_descricao");
+            int    nivel     = Integer.parseInt(request.getParameter("txt_nivel"));
+
+            Grupo grupo = new Grupo();
+            grupo.setNome(nome);
+            grupo.setDescricao(descricao);
+            grupo.setNivel(nivel);
+
+            DataSource datasource = new DataSource();
+            GrupoDAO   grupodao   = new GrupoDAO(datasource);
+
+            try {
+                grupodao.create(grupo);
+                UsuarioDAO userdao = new UsuarioDAO(datasource);
+                userdao.setGrupoFromUsuario(usuario, grupo);
+                ArrayList<Object> list = new ArrayList<>();
+                request.setAttribute(Parameters.LOG, LOGMessage.getSuccessfulAddingMessage("Grupo"));
+                request.setAttribute(Parameters.PAGE_SELECTION, Pages.NULL);
+                request.setAttribute(Parameters.OBJECT_LIST, list);
+                datasource.getConnection().close();
+            } catch (RuntimeException | SQLException e) {
+                System.err.println(e.getMessage());
+                request.setAttribute(Parameters.LOG, LOGMessage.getErrorAddingMessage("grupo"));
+            }
+        } else {
+            request.setAttribute(Parameters.LOG, LOGMessage.SESSION_EXPIRED);
+            page = Pages.INDEX;
         }
         
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(page);
