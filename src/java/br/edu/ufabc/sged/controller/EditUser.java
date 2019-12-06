@@ -8,6 +8,9 @@ package br.edu.ufabc.sged.controller;
 import br.edu.ufabc.sged.dao.DataSource;
 import br.edu.ufabc.sged.dao.UsuarioDAO;
 import br.edu.ufabc.sged.model.Usuario;
+import br.edu.ufabc.sged.util.LOGMessage;
+import br.edu.ufabc.sged.util.Pages;
+import br.edu.ufabc.sged.util.Parameters;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -35,30 +38,33 @@ public class EditUser extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {      
-        Usuario usuario = (Usuario) request.getSession().getAttribute("usuario");
-        String page = "/home.jsp";
-        ArrayList<Object> list = new ArrayList<>();
-        request.setAttribute("errorSTR", "");
-        request.setAttribute("pagina", "visualizar usuarios");
-        request.setAttribute("objectList", list);
+            throws ServletException, IOException {
+        Usuario usuario = (Usuario) request.getSession().getAttribute(Parameters.SESSION_NAME);
+        String page = Pages.HOME;
         
-        if (usuario != null){
+        if (Usuario.exist(usuario)){
+            request.setAttribute(Parameters.PAGE_SELECTION, Pages.EDIT_USER);
+            request.setAttribute(Parameters.OBJECT_LIST, new ArrayList<>());
+        
+            Usuario userToEditIncomplete = new Usuario();
+            int idUsuario = Integer.parseInt(request.getParameter("txt_id_usuario"));
+            userToEditIncomplete.setId(idUsuario);
+            
             DataSource datasource = new DataSource();
-            UsuarioDAO userDAO = new UsuarioDAO(datasource);
+            UsuarioDAO usuarioDAO = new UsuarioDAO(datasource);
             
             try {
-                List<Object> result = userDAO.readUsuarioFromGrupo(usuario);
+                List<Object> userToEdit = usuarioDAO.read(userToEditIncomplete);
                 datasource.getConnection().close();
-                request.setAttribute("objectList", result);
-                request.setAttribute("errorSTR", "Usuários recuperados com sucesso.");
-            } catch (SQLException ex) {
-                System.err.println("Erro ao fechar conexão. "+ex.getMessage());
-                request.setAttribute("errorSTR", "Erro ao recuperar usuários");
+                request.setAttribute(Parameters.OBJECT_LIST, userToEdit);
+                request.setAttribute(Parameters.LOG, LOGMessage.getSuccessfulRecoveryMessage("Usuário"));
+            } catch (RuntimeException | SQLException e) {
+                System.err.println(e.getMessage());
+                request.setAttribute(Parameters.LOG, LOGMessage.getErrorRecoveryMessage("usuário") + " " + LOGMessage.CONTACT_ADMINISTRATOR);
             }
         } else {
-            request.setAttribute("errorSTR", "Sessão expirada");
-            page = "/index.jsp";
+            request.setAttribute(Parameters.LOG, LOGMessage.SESSION_EXPIRED);
+            page = Pages.INDEX;
         }
         
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(page);

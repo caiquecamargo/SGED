@@ -13,9 +13,11 @@ import br.edu.ufabc.sged.model.Item;
 import br.edu.ufabc.sged.model.Music;
 import br.edu.ufabc.sged.model.PDF;
 import br.edu.ufabc.sged.model.Usuario;
+import br.edu.ufabc.sged.util.LOGMessage;
+import br.edu.ufabc.sged.util.Pages;
+import br.edu.ufabc.sged.util.Parameters;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import javax.servlet.RequestDispatcher;
@@ -56,39 +58,23 @@ public class DeleteItem extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        Usuario usuario = (Usuario) request.getSession().getAttribute("usuario");
-        ArrayList<Object> list = new ArrayList<>();
-        request.setAttribute("objectList", list);
-        request.setAttribute("errorSTR", "");
-        request.setAttribute("pagina", "visualizar item");
+        Usuario usuario = (Usuario) request.getSession().getAttribute(Parameters.SESSION_NAME);
         
         int  idItem = Integer.parseInt(request.getParameter("txt_id_item"));
-        System.out.println(request.getParameter("txt_tipo"));
         String tipo = request.getParameter("txt_tipo");
-        System.out.println(request.getParameter("txt_src"));
         String src  = request.getParameter("txt_src");
-        String page = "/home.jsp";
+        String page = Pages.HOME;
         
-        Item item = null;
-        switch (tipo) {
-            case "PDF":
-                item = new PDF();
-                break;
-            case "MUSIC":
-                item = new Music();
-                break;
-            case "DOC":
-                item = new Doc();
-                break;
-            case "IMAGE":
-                item = new Image();
-                break;
-            default:
-                break;
-        }
+        
+        
+        
         
         if(usuario != null){
-            if(item != null){
+            try{
+                Item item = Item.getItemAsType(tipo);
+                request.setAttribute(Parameters.OBJECT_LIST, new ArrayList<>());
+                request.setAttribute(Parameters.PAGE_SELECTION, Pages.VIEW_ITENS);
+                
                 item.setId(idItem);
                 item.setSrc(src);
                 
@@ -102,19 +88,18 @@ public class DeleteItem extends HttpServlet {
                     
                     File file = new File(item.getSrc());
                     file.delete();
-                    request.setAttribute("errorSTR", "Item excluido com sucesso.");
-                } catch (RuntimeException e){
+                    request.setAttribute(Parameters.LOG, LOGMessage.getSuccessfulDeleteMessage(item.getTipo()));
+                } catch (RuntimeException | SQLException e){
                     System.err.println(e.getMessage());
-                    request.setAttribute("errorSTR", e.getMessage());
-                } catch (SQLException ex) {
-                    System.err.println(ex.getMessage());
-                }
-            } else {
-                request.setAttribute("errorSTR", "Erro ao excluir item");
+                    request.setAttribute(Parameters.LOG, LOGMessage.getErrorDeleteMessage(item.getTipo()) + " " + LOGMessage.CONTACT_ADMINISTRATOR);
+                } 
+            } catch (RuntimeException e) {
+                System.err.println(e.getMessage());
+                request.setAttribute(Parameters.LOG, LOGMessage.getErrorDeleteMessage("item") + " " + LOGMessage.CONTACT_ADMINISTRATOR);
             }
         } else {
-            request.setAttribute("errorSTR", "Sessão expirada");
-            page = "/index.jsp";
+            request.setAttribute(Parameters.LOG, LOGMessage.SESSION_EXPIRED);
+            page = Pages.INDEX;
         }
         
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(page);

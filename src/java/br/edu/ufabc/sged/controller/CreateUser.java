@@ -8,6 +8,9 @@ package br.edu.ufabc.sged.controller;
 import br.edu.ufabc.sged.dao.DataSource;
 import br.edu.ufabc.sged.dao.UsuarioDAO;
 import br.edu.ufabc.sged.model.Usuario;
+import br.edu.ufabc.sged.util.LOGMessage;
+import br.edu.ufabc.sged.util.Pages;
+import br.edu.ufabc.sged.util.Parameters;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.servlet.RequestDispatcher;
@@ -34,7 +37,7 @@ public class CreateUser extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        String page = "/newuser.jsp";
+        String page = Pages.NEW_USER;
         String nome  = request.getParameter("txt_nome");
         String email = request.getParameter("txt_email");
         String senha = request.getParameter("txt_senha");
@@ -50,13 +53,11 @@ public class CreateUser extends HttpServlet {
         try {
             usuarioDAO.create(usuario);
             datasource.getConnection().close();
-            page = "/index.jsp";
-            request.setAttribute("errorSTR", " ");
-        } catch (RuntimeException e) {
-            request.setAttribute("errorSTR", e.getMessage());
-        } catch (SQLException ex){
-            System.out.println("Erro ao fechar Conexão - "+ex.getMessage());
-            request.setAttribute("errorMSG", "Erro ao adicionar usuário, contate administrador do sistema");
+            page = Pages.INDEX;
+            request.setAttribute(Parameters.LOG, LOGMessage.NULL);
+        } catch (RuntimeException | SQLException e) {
+            System.err.println(e.getMessage());
+            request.setAttribute(Parameters.LOG, LOGMessage.ERROR_CREATE_USER + " " + LOGMessage.CONTACT_ADMINISTRATOR);
         }
         
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(page);

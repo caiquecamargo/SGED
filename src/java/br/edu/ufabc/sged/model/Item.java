@@ -5,6 +5,8 @@
  */
 package br.edu.ufabc.sged.model;
 
+import br.edu.ufabc.sged.util.LOGMessage;
+
 /**
  *
  * @author Caique de Camargo
@@ -15,6 +17,21 @@ public abstract class Item implements java.io.Serializable{
     private String  nome;
     private String  restricoes;
     private String  src;
+    
+    public static final Item getItemAsType(String type){
+        switch (type) {
+            case "PDF":
+                return new PDF();
+            case "MUSIC":
+                return new Music();
+            case "DOC":
+                return new Doc();
+            case "IMAGE":
+                return new Image();
+            default:
+                throw new RuntimeException(LOGMessage.ERROR_RETURNING_ITEM_TYPE);
+        }
+    }
 
     /**
      * @return the id

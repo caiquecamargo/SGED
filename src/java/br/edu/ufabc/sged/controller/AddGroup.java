@@ -44,10 +44,9 @@ public class AddGroup extends HttpServlet {
         String page = Pages.HOME;
         
         if (usuario != null){
-            ArrayList<Object> list = new ArrayList<>();
             request.setAttribute(Parameters.LOG, LOGMessage.NULL);
             request.setAttribute(Parameters.PAGE_SELECTION, Pages.ADD_GROUP);
-            request.setAttribute(Parameters.OBJECT_LIST, list);
+            request.setAttribute(Parameters.OBJECT_LIST, new ArrayList<>());
         } else {
             request.setAttribute(Parameters.LOG, LOGMessage.SESSION_EXPIRED);
             page = Pages.INDEX;
@@ -88,10 +87,9 @@ public class AddGroup extends HttpServlet {
                 grupodao.create(grupo);
                 UsuarioDAO userdao = new UsuarioDAO(datasource);
                 userdao.setGrupoFromUsuario(usuario, grupo);
-                ArrayList<Object> list = new ArrayList<>();
                 request.setAttribute(Parameters.LOG, LOGMessage.getSuccessfulAddingMessage("Grupo"));
                 request.setAttribute(Parameters.PAGE_SELECTION, Pages.NULL);
-                request.setAttribute(Parameters.OBJECT_LIST, list);
+                request.setAttribute(Parameters.OBJECT_LIST, new ArrayList<>());
                 datasource.getConnection().close();
             } catch (RuntimeException | SQLException e) {
                 System.err.println(e.getMessage());

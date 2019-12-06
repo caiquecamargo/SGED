@@ -29,8 +29,8 @@
         <servlet-class>br.edu.ufabc.sged.controller.AddGroup</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>EditGroup</servlet-name>
-        <servlet-class>br.edu.ufabc.sged.controller.EditGroup</servlet-class>
+        <servlet-name>ViewGroups</servlet-name>
+        <servlet-class>br.edu.ufabc.sged.controller.ViewGroups</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>EditPerson</servlet-name>
@@ -41,8 +41,8 @@
         <servlet-class>br.edu.ufabc.sged.controller.ValidateUser</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>EditUser</servlet-name>
-        <servlet-class>br.edu.ufabc.sged.controller.EditUser</servlet-class>
+        <servlet-name>ViewUsers</servlet-name>
+        <servlet-class>br.edu.ufabc.sged.controller.ViewUsers</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>FileUploadServlet</servlet-name>
@@ -69,12 +69,12 @@
         <servlet-class>br.edu.ufabc.sged.controller.ViewGroupMembers</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>EditDataGroup</servlet-name>
-        <servlet-class>br.edu.ufabc.sged.controller.EditDataGroup</servlet-class>
+        <servlet-name>EditGroup</servlet-name>
+        <servlet-class>br.edu.ufabc.sged.controller.EditGroup</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>EditDataUser</servlet-name>
-        <servlet-class>br.edu.ufabc.sged.controller.EditDataUser</servlet-class>
+        <servlet-name>EditUser</servlet-name>
+        <servlet-class>br.edu.ufabc.sged.controller.EditUser</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Home</servlet-name>
@@ -113,8 +113,8 @@
         <url-pattern>/addgroup</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>EditGroup</servlet-name>
-        <url-pattern>/editgroup</url-pattern>
+        <servlet-name>ViewGroups</servlet-name>
+        <url-pattern>/viewgroups</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>EditPerson</servlet-name>
@@ -125,8 +125,8 @@
         <url-pattern>/validateuser</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>EditUser</servlet-name>
-        <url-pattern>/edituser</url-pattern>
+        <servlet-name>ViewUsers</servlet-name>
+        <url-pattern>/viewusers</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>FileUploadServlet</servlet-name>
@@ -153,12 +153,12 @@
         <url-pattern>/viewgroupmembers</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>EditDataGroup</servlet-name>
-        <url-pattern>/editdatagroup</url-pattern>
+        <servlet-name>EditGroup</servlet-name>
+        <url-pattern>/editgroup</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>EditDataUser</servlet-name>
-        <url-pattern>/editdatauser</url-pattern>
+        <servlet-name>EditUser</servlet-name>
+        <url-pattern>/edituser</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>Home</servlet-name>

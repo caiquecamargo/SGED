@@ -23,9 +23,9 @@
         <li class="mobile"><a href="additem">Adicionar novos itens</a></li>
         <li class="mobile"><a href="viewitem">Visualizar itens</a></li>
         <li class="mobile"><a href="addgroup">Adicionar grupos</a></li>
-        <li class="mobile"><a href="editgroup">Editar grupos</a></li>
+        <li class="mobile"><a href="viewgroups">Editar grupos</a></li>
         <li class="mobile"><a href="validateuser">Habilitar Usuario</a></li>
-        <li class="mobile"><a href="edituser">Editar Usuario</a></li>
+        <li class="mobile"><a href="viewusers">Editar Usuario</a></li>
         <li id="blink"><p>Seja bem vindo ${usuario.getNome()}</p></li>
         <li><a href="myaccount">Minha conta</a></li>
         <li><a href="logoutservlet">Logout</a></li>
@@ -36,9 +36,9 @@
         <li><a href="additem">Adicionar novos itens</a></li>
         <li><a href="viewitem">Visualizar itens</a></li>
         <li><a href="addgroup">Adicionar grupos</a></li>
-        <li><a href="editgroup">Editar grupos</a></li>
+        <li><a href="viewgroups">Editar grupos</a></li>
         <li><a href="validateuser">Habilitar Usuario</a></li>
-        <li><a href="edituser">Editar Usuario</a></li>
+        <li><a href="viewusers">Editar Usuario</a></li>
       </ul>
     </nav>
         <main class="content">
@@ -111,7 +111,7 @@
                             </label>
                             <form class="form-trigger">
                                 <input value="${grupo.getId()}" name="txt_id_grupo" class="notdisplay">
-                                <button class="trigger-conteudo" type="submit" formaction="editdatagroup" formmethod="GET">Editar</button>
+                                <button class="trigger-conteudo" type="submit" formaction="editgroup" formmethod="GET">Editar</button>
                                 <button class="trigger-conteudo" type="submit" formaction="viewgroupmembers" formmethod="POST">Visualizar membros do grupo</button>
                                 <button class="trigger-conteudo" type="submit" formaction="deletegroup" formmethod="POST">Excluir</button>
                             </form>
@@ -121,7 +121,7 @@
             </c:if>
             <c:if test="${pagina == 'editar grupo'}">
                 <h1 class="titulo">Editar dados do grupo</h1>
-                <form action="editdatagroup" class="editform">
+                <form action="editgroup" class="editform">
                     <input value="${objectList[0].getId()}" name="txt_id_grupo" class="notdisplay">
                     <input type="text" value="${objectList[0].getNome()}" name="txt_nome">
                     <input type="text" value="${objectList[0].getDescricao()}" name="txt_descricao">
@@ -207,7 +207,7 @@
                                 <h3 class="trigger-tipo">${user.getNivel_de_acesso()}</h3>
                                 <h3 class="trigger-src">${user.getEmail()}</h3>
                             </label>
-                            <form action="editdatauser" method="GET" class="form-trigger">
+                            <form action="edituser" method="GET" class="form-trigger">
                                 <input value="${user.getId()}" name="txt_id_usuario" class="notdisplay">
                                 <button class="trigger-conteudo" type="submit">Editar</button>
                             </form>
@@ -217,7 +217,7 @@
             </c:if>
             <c:if test="${pagina == 'editar usuario'}">
             <h1 class="titulo">Editar dados do usuario</h1>
-            <form action="editdatauser" class="editform">
+            <form action="edituser" class="editform">
                 <input value="${objectList[0].getId()}" name="txt_id_usuario" class="notdisplay">
                 <input type="text" placeholder="${objectList[0].getNome()}" disabled>
                 <input type="text" placeholder="${objectList[0].getEmail()}" disabled>

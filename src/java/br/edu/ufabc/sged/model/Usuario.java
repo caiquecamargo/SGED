@@ -20,6 +20,11 @@ public class Usuario implements java.io.Serializable{
     private int     situacao;
     private List<Object>  grupo;
     private List<Object> itens;
+    
+    public static final boolean exist(Usuario u){
+        if (u != null) return true;
+        return false;
+    }
 
     /**
      * @return the id

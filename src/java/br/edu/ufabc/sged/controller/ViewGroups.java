@@ -6,8 +6,7 @@
 package br.edu.ufabc.sged.controller;
 
 import br.edu.ufabc.sged.dao.DataSource;
-import br.edu.ufabc.sged.dao.GrupoDAO;
-import br.edu.ufabc.sged.model.Grupo;
+import br.edu.ufabc.sged.dao.UsuarioDAO;
 import br.edu.ufabc.sged.model.Usuario;
 import br.edu.ufabc.sged.util.LOGMessage;
 import br.edu.ufabc.sged.util.Pages;
@@ -25,7 +24,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Caique de Camargo
  */
-public class DeleteGroup extends HttpServlet {
+public class ViewGroups extends HttpServlet {
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
@@ -39,7 +38,31 @@ public class DeleteGroup extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        String page = Pages.HOME;
+        Usuario usuario = (Usuario) request.getSession().getAttribute(Parameters.SESSION_NAME);
         
+        if (usuario != null){
+            request.setAttribute(Parameters.PAGE_SELECTION, Pages.VIEW_GROUPS);
+            request.setAttribute(Parameters.OBJECT_LIST, new ArrayList<>());
+            
+            DataSource datasource = new DataSource();
+            UsuarioDAO usuariodao = new UsuarioDAO(datasource);
+            try {
+                usuario.setGrupo(usuariodao.readGrupoFromUsuario(usuario));
+                datasource.getConnection().close();
+                request.setAttribute(Parameters.LOG, LOGMessage.getSuccessfulRecoveryMessage("Grupos"));
+                request.setAttribute(Parameters.OBJECT_LIST, usuario.getGrupo());
+            } catch (RuntimeException | SQLException e) {
+                System.err.println(e.getMessage());
+                request.setAttribute(Parameters.LOG, LOGMessage.getErrorRecoveryMessage("grupos") + " " + LOGMessage.CONTACT_ADMINISTRATOR);
+            }
+        } else {
+            request.setAttribute(Parameters.LOG, LOGMessage.SESSION_EXPIRED);
+            page = Pages.INDEX;
+        }        
+        
+        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(page);
+        dispatcher.forward(request, response);
     }
 
     /**
@@ -53,36 +76,6 @@ public class DeleteGroup extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        Usuario usuario = (Usuario) request.getSession().getAttribute(Parameters.SESSION_NAME);
-        int     idGrupo = Integer.parseInt(request.getParameter("txt_id_grupo"));
-        Grupo groupToDelete = new Grupo();
-        groupToDelete.setId(idGrupo);
         
-        String page = Pages.HOME;
-        
-        if(usuario != null){
-            request.setAttribute(Parameters.PAGE_SELECTION, Pages.EDIT_GROUP);
-            request.setAttribute(Parameters.OBJECT_LIST, new ArrayList<>());
-            
-            DataSource datasource = new DataSource();
-            GrupoDAO grupoDAO = new GrupoDAO(datasource);
-            
-            try {
-                grupoDAO.deleteRelationship(groupToDelete);
-                grupoDAO.delete(groupToDelete);
-                datasource.getConnection().close();
-                request.setAttribute(Parameters.LOG, LOGMessage.getSuccessfulDeleteMessage("Grupo"));
-            } catch (RuntimeException | SQLException e){
-                System.err.println(e.getMessage());
-                request.setAttribute(Parameters.LOG, LOGMessage.getErrorDeleteMessage("grupo") + " " + LOGMessage.CONTACT_ADMINISTRATOR);
-            }
-        } else {
-            request.setAttribute(Parameters.LOG, LOGMessage.SESSION_EXPIRED);
-            page = Pages.INDEX;
-        }
-        
-        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(page);
-        dispatcher.forward(request, response);
     }
-
 }

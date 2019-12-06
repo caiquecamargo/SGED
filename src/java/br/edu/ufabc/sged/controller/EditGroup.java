@@ -7,10 +7,12 @@ package br.edu.ufabc.sged.controller;
 
 import br.edu.ufabc.sged.dao.DataSource;
 import br.edu.ufabc.sged.dao.GrupoDAO;
-import br.edu.ufabc.sged.dao.UsuarioDAO;
+import br.edu.ufabc.sged.model.Grupo;
 import br.edu.ufabc.sged.model.Usuario;
+import br.edu.ufabc.sged.util.LOGMessage;
+import br.edu.ufabc.sged.util.Pages;
+import br.edu.ufabc.sged.util.Parameters;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class EditGroup extends HttpServlet {
 
+
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
@@ -38,34 +41,33 @@ public class EditGroup extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String page = "/home.jsp";
-        Usuario usuario = (Usuario) request.getSession().getAttribute("usuario");
-        ArrayList<Object> list = new ArrayList<>();
-        request.setAttribute("errorSTR", "");
-        request.setAttribute("pagina", "");
-        request.setAttribute("objectList", list);
+        Usuario usuario = (Usuario) request.getSession().getAttribute(Parameters.SESSION_NAME);
+        String page = Pages.EDIT_GROUP;
         
         if (usuario != null){
+            request.setAttribute(Parameters.PAGE_SELECTION, Pages.EDIT_GROUP);
+            request.setAttribute(Parameters.OBJECT_LIST, new ArrayList<>());
+            
+            Grupo GroupToEdit = new Grupo();
+            int idGrupo = Integer.parseInt(request.getParameter("txt_id_grupo"));
+            GroupToEdit.setId(idGrupo);
+            
             DataSource datasource = new DataSource();
-            UsuarioDAO usuariodao = new UsuarioDAO(datasource);
+            GrupoDAO grupoDAO = new GrupoDAO(datasource);
+            
             try {
-                usuario.setGrupo(usuariodao.readGrupoFromUsuario(usuario));
+                List<Object> grupo = grupoDAO.read(GroupToEdit);
                 datasource.getConnection().close();
-                request.setAttribute("errorSTR", "Grupos recuperados com sucesso");
-                request.setAttribute("pagina", "editar grupo");
-                request.setAttribute("objectList", usuario.getGrupo());
-            } catch (RuntimeException e) {
-                request.setAttribute("errorSTR", e.getMessage());
-            } catch (SQLException ex){
-                System.err.println("Erro ao recuperar grupos. "+ex.getMessage());
-                request.setAttribute("errorSTR", "Erro Desconhecido ao recuperar Grupo. Contate admistrador do sistema");
+                request.setAttribute(Parameters.OBJECT_LIST, grupo);
+                request.setAttribute(Parameters.LOG, LOGMessage.getSuccessfulRecoveryMessage("Grupo"));
+            } catch (RuntimeException | SQLException e) {
+                System.err.println(e.getMessage());
+                request.setAttribute(Parameters.LOG, LOGMessage.getErrorRecoveryMessage("grupo") + " " + LOGMessage.CONTACT_ADMINISTRATOR);
             }
         } else {
-            request.setAttribute("errorSTR", "Sessão expirada");
-            page = "/index.jsp";
+            request.setAttribute(Parameters.LOG, LOGMessage.SESSION_EXPIRED);
+            page = Pages.INDEX;
         }
-        
-                
         
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(page);
         dispatcher.forward(request, response);
@@ -82,6 +84,41 @@ public class EditGroup extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        Usuario usuario = (Usuario) request.getSession().getAttribute(Parameters.SESSION_NAME);
+        String page = Pages.HOME;
         
+        if (usuario != null){
+            request.setAttribute(Parameters.PAGE_SELECTION, Pages.EDIT_GROUP);
+            request.setAttribute(Parameters.OBJECT_LIST, new ArrayList<>());
+
+            Grupo  grupo     = new Grupo();
+            int    idGrupo   = Integer.parseInt(request.getParameter("txt_id_grupo"));
+            String nome      = request.getParameter("txt_nome");
+            String descricao = request.getParameter("txt_descricao");
+            int    nivel     = Integer.parseInt(request.getParameter("txt_nivel"));
+            
+            grupo.setId(idGrupo);
+            grupo.setNome(nome);
+            grupo.setDescricao(descricao);
+            grupo.setNivel(nivel);
+            
+            DataSource datasource = new DataSource();
+            GrupoDAO   grupoDAO   = new GrupoDAO(datasource);
+            
+            try {
+                grupoDAO.update(grupo);
+                datasource.getConnection().close();
+                request.setAttribute(Parameters.LOG, LOGMessage.getSuccessfulUpdatingMessage("Grupo"));
+            } catch (RuntimeException | SQLException e) {
+                System.err.println(e.getMessage());
+                request.setAttribute(Parameters.LOG, LOGMessage.getErrorUpdatingMessage("grupo"));
+            }
+        } else {
+            request.setAttribute(Parameters.LOG, LOGMessage.SESSION_EXPIRED);
+            page = Pages.INDEX;
+        }
+        
+        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(page);
+        dispatcher.forward(request, response);
     }
 }

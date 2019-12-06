@@ -8,6 +8,9 @@ package br.edu.ufabc.sged.controller;
 import br.edu.ufabc.sged.dao.DataSource;
 import br.edu.ufabc.sged.dao.UsuarioDAO;
 import br.edu.ufabc.sged.model.Usuario;
+import br.edu.ufabc.sged.util.LOGMessage;
+import br.edu.ufabc.sged.util.Pages;
+import br.edu.ufabc.sged.util.Parameters;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -22,7 +25,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Caique de Camargo
  */
-public class EditDataUser extends HttpServlet {
+public class ViewUsers extends HttpServlet {
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
@@ -35,37 +38,29 @@ public class EditDataUser extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        Usuario usuario = (Usuario) request.getSession().getAttribute("usuario");
-        String page = "/home.jsp";
-        ArrayList<Object> list = new ArrayList<>();
-        request.setAttribute("errorSTR", "");
-        request.setAttribute("pagina", "editar dados do usuario");
-        request.setAttribute("objectList", list);
+            throws ServletException, IOException {      
+        Usuario usuario = (Usuario) request.getSession().getAttribute(Parameters.SESSION_NAME);
+        String page = Pages.HOME;
         
-        Usuario incompleto = new Usuario();
-        int idUsuario = Integer.parseInt(request.getParameter("txt_id_usuario"));
-        incompleto.setId(idUsuario);
-        
-        if (usuario != null){
+        if (Usuario.exist(usuario)){
+            request.setAttribute(Parameters.PAGE_SELECTION, Pages.VIEW_USERS);
+            request.setAttribute(Parameters.OBJECT_LIST, new ArrayList<>());
+            
             DataSource datasource = new DataSource();
-            UsuarioDAO usuarioDAO = new UsuarioDAO(datasource);
+            UsuarioDAO userDAO = new UsuarioDAO(datasource);
             
             try {
-                List<Object> grupo = usuarioDAO.read(incompleto);
+                List<Object> usersOfGroup = userDAO.readUsuarioFromGrupo(usuario);
                 datasource.getConnection().close();
-                request.setAttribute("objectList", grupo);
-                request.setAttribute("errorSTR", "Usuario recuperado com sucesso");
-            } catch (RuntimeException e) {
-                System.err.println(e.getMessage());
-                request.setAttribute("errorSTR", e.getMessage());
+                request.setAttribute(Parameters.OBJECT_LIST, usersOfGroup);
+                request.setAttribute(Parameters.LOG, LOGMessage.getSuccessfulRecoveryMessage("Usuários"));
             } catch (SQLException ex) {
                 System.err.println(ex.getMessage());
-                request.setAttribute("errorSTR", "Erro ao editar Usuario. Contate administrador do sistema.");
+                request.setAttribute(Parameters.LOG, LOGMessage.getErrorRecoveryMessage("usuários"));
             }
         } else {
-            request.setAttribute("errorSTR", "Sessão expirada");
-            page = "/index.jsp";
+            request.setAttribute(Parameters.LOG, LOGMessage.SESSION_EXPIRED);
+            page = Pages.INDEX;
         }
         
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(page);
