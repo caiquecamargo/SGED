@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<%@page import="br.edu.ufabc.sged.util.HomePageSelector" %>
 <jsp:useBean id="usuario" type="br.edu.ufabc.sged.model.Usuario" scope="session"/>
 <jsp:useBean id="errorSTR" type="java.lang.String" scope="request"/>
 <jsp:useBean id="pagina" type="java.lang.String" scope="request"/>
@@ -42,7 +43,7 @@
       </ul>
     </nav>
         <main class="content">
-            <c:if test="${pagina == 'adicionar item'}">
+             <c:if test="${pagina == 'adicionar item'}">
                 <h1 class="titulo">Adicionar novos itens</h1>
                 <form action="fileuploadservlet" method="POST" enctype="multipart/form-data" class="draganddrop">
                     <input type="file" name="file">
@@ -149,7 +150,7 @@
                                 <h3 class="trigger-tipo">${user.getNivel_de_acesso()}</h3>
                                 <h3 class="trigger-src">${user.getEmail()}</h3>
                             </label>
-                            <form action="editdatauser" method="GET" class="form-trigger">
+                            <form action="edituser" method="GET" class="form-trigger">
                                 <input value="${user.getId()}" name="txt_id_usuario" class="notdisplay">
                                 <c:if test="${usuario.getNivel_de_acesso() < user.getNivel_de_acesso()}"><button class="trigger-conteudo" type="submit">Editar</button></c:if>
                                 <c:if test="${usuario.getNivel_de_acesso() >= user.getNivel_de_acesso()}"><button class="trigger-conteudo" type="submit" disabled class="disabled">Editar</button></c:if>
@@ -178,7 +179,7 @@
                                 <h3 class="trigger-tipo"><c:if test="${user.getSituacao() == 0}">Nao habilitado</c:if><c:if test="${user.getSituacao() == 1}">Habilitado</c:if></h3>
                                 <h3 class="trigger-src">${user.getEmail()}</h3>
                             </label>
-                            <form action="habilitarusuario" method="POST" class="form-trigger">
+                            <form action="validateuser" method="POST" class="form-trigger">
                                 <input value="${user.getId()}" name="txt_id_usuario" class="notdisplay">
                                 <input type="number" min="${user.getNivel_de_acesso()}" placeholder="Nivel de acesso" name="txt_nivel_de_acesso">
                                 <button class="trigger-conteudo" type="submit">Habilitar</button>

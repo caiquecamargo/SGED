@@ -5,6 +5,9 @@
  */
 package br.edu.ufabc.sged.controller;
 
+import br.edu.ufabc.sged.util.LOGMessage;
+import br.edu.ufabc.sged.util.Pages;
+import br.edu.ufabc.sged.util.Parameters;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.RequestDispatcher;
@@ -22,8 +25,8 @@ public class NewUser extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.setAttribute("errorSTR", " ");
-        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/newuser.jsp");
+        request.setAttribute(Parameters.LOG, LOGMessage.NULL);
+        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(Pages.NEW_USER);
         dispatcher.forward(request, response);
     }
 }

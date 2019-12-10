@@ -7,12 +7,9 @@ package br.edu.ufabc.sged.controller;
 
 import br.edu.ufabc.sged.dao.DataSource;
 import br.edu.ufabc.sged.dao.ItemDAO;
-import br.edu.ufabc.sged.model.Doc;
-import br.edu.ufabc.sged.model.Image;
 import br.edu.ufabc.sged.model.Item;
-import br.edu.ufabc.sged.model.Music;
-import br.edu.ufabc.sged.model.PDF;
 import br.edu.ufabc.sged.model.Usuario;
+import br.edu.ufabc.sged.util.HomePageSelector;
 import br.edu.ufabc.sged.util.LOGMessage;
 import br.edu.ufabc.sged.util.Pages;
 import br.edu.ufabc.sged.util.Parameters;
@@ -58,22 +55,18 @@ public class DeleteItem extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        request = Parameters.setNullAttributesToRequest(request);
         Usuario usuario = (Usuario) request.getSession().getAttribute(Parameters.SESSION_NAME);
+        String page = Pages.HOME;
         
         int  idItem = Integer.parseInt(request.getParameter("txt_id_item"));
         String tipo = request.getParameter("txt_tipo");
         String src  = request.getParameter("txt_src");
-        String page = Pages.HOME;
         
-        
-        
-        
-        
-        if(usuario != null){
+        if(Usuario.exist(usuario)){
             try{
                 Item item = Item.getItemAsType(tipo);
-                request.setAttribute(Parameters.OBJECT_LIST, new ArrayList<>());
-                request.setAttribute(Parameters.PAGE_SELECTION, Pages.VIEW_ITENS);
+                request.setAttribute(Parameters.PAGE_SELECTION, HomePageSelector.VIEW_ITENS);
                 
                 item.setId(idItem);
                 item.setSrc(src);

@@ -8,6 +8,7 @@ package br.edu.ufabc.sged.controller;
 import br.edu.ufabc.sged.dao.DataSource;
 import br.edu.ufabc.sged.dao.UsuarioDAO;
 import br.edu.ufabc.sged.model.Usuario;
+import br.edu.ufabc.sged.util.HomePageSelector;
 import br.edu.ufabc.sged.util.LOGMessage;
 import br.edu.ufabc.sged.util.Pages;
 import br.edu.ufabc.sged.util.Parameters;
@@ -38,12 +39,12 @@ public class ViewGroups extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        request = Parameters.setNullAttributesToRequest(request);
         String page = Pages.HOME;
         Usuario usuario = (Usuario) request.getSession().getAttribute(Parameters.SESSION_NAME);
         
-        if (usuario != null){
-            request.setAttribute(Parameters.PAGE_SELECTION, Pages.VIEW_GROUPS);
-            request.setAttribute(Parameters.OBJECT_LIST, new ArrayList<>());
+        if (Usuario.exist(usuario)){
+            request.setAttribute(Parameters.PAGE_SELECTION, HomePageSelector.VIEW_GROUPS);
             
             DataSource datasource = new DataSource();
             UsuarioDAO usuariodao = new UsuarioDAO(datasource);

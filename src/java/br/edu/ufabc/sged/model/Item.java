@@ -32,6 +32,22 @@ public abstract class Item implements java.io.Serializable{
                 throw new RuntimeException(LOGMessage.ERROR_RETURNING_ITEM_TYPE);
         }
     }
+    
+    public static final Item getItemByHeader(String[] header){
+        switch (header[0]) {
+                case "application":
+                    if(header[1].equals("pdf"))
+                        return new PDF();
+                    else if (header[1].equals("doc") || header[1].equals("docx"))
+                        return new Doc();
+                case "image":
+                    return new Image();
+                case "audio":
+                    return new Music();
+                default:
+                    throw new RuntimeException(LOGMessage.ERROR_RETURNING_ITEM_TYPE);
+            }
+    }
 
     /**
      * @return the id

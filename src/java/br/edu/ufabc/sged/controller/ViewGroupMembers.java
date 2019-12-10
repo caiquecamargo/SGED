@@ -9,8 +9,11 @@ import br.edu.ufabc.sged.dao.DataSource;
 import br.edu.ufabc.sged.dao.GrupoDAO;
 import br.edu.ufabc.sged.model.Grupo;
 import br.edu.ufabc.sged.model.Usuario;
+import br.edu.ufabc.sged.util.HomePageSelector;
+import br.edu.ufabc.sged.util.LOGMessage;
+import br.edu.ufabc.sged.util.Pages;
+import br.edu.ufabc.sged.util.Parameters;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,33 +55,31 @@ public class ViewGroupMembers extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        Usuario usuario = (Usuario) request.getSession().getAttribute("usuario");
+        request = Parameters.setNullAttributesToRequest(request);
+        Usuario usuario = (Usuario) request.getSession().getAttribute(Parameters.SESSION_NAME);
+        String page = Pages.HOME;
+        
         int     idGrupo = Integer.parseInt(request.getParameter("txt_id_grupo"));
-        Grupo incompleto = new Grupo();
-        incompleto.setId(idGrupo);
+        Grupo groupToReadMembers = new Grupo();
+        groupToReadMembers.setId(idGrupo);
         
-        String page = "/home.jsp";
-        ArrayList<Object> list = new ArrayList<>();
-        request.setAttribute("errorSTR", "");
-        request.setAttribute("pagina", "usuario do grupo");
-        request.setAttribute("objectList", list);
-        
-        if (usuario != null){
+        if (Usuario.exist(usuario)){
+            request.setAttribute(Parameters.PAGE_SELECTION, HomePageSelector.VIEW_GROUP_MEMBERS);
             DataSource datasource = new DataSource();
             GrupoDAO grupoDAO = new GrupoDAO(datasource);
             
             try {
-                List<Object> result = grupoDAO.readMembers(incompleto);
+                List<Object> membersOfGroup = grupoDAO.readMembers(groupToReadMembers);
                 datasource.getConnection().close();
-                request.setAttribute("objectList", result);
-                request.setAttribute("errorSTR", "Membros recuperados com sucesso");
-            } catch (SQLException ex) {
-                System.err.println(ex.getMessage());
-                request.setAttribute("errorSTR", "Erro ao recuperar usuários do grupo. Contate administrador do sistema");
+                request.setAttribute(Parameters.OBJECT_LIST, membersOfGroup);
+                request.setAttribute(Parameters.LOG, LOGMessage.SUCCESSFUL_RECOVERY_GROUP_MEMBERS);
+            } catch (RuntimeException | SQLException e) {
+                System.err.println(e.getMessage());
+                request.setAttribute(Parameters.LOG, LOGMessage.ERROR_RECOVERY_GROUP_MEMBERS + " " + LOGMessage.CONTACT_ADMINISTRATOR);
             }
         } else {
-            request.setAttribute("errorSTR", "Sessão expirada");
-            page = "/index.jsp";
+            request.setAttribute(Parameters.LOG, LOGMessage.SESSION_EXPIRED);
+            page = Pages.INDEX;
         }
         
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(page);

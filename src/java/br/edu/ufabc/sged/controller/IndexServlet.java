@@ -5,8 +5,10 @@
  */
 package br.edu.ufabc.sged.controller;
 
+import br.edu.ufabc.sged.util.LOGMessage;
+import br.edu.ufabc.sged.util.Pages;
+import br.edu.ufabc.sged.util.Parameters;
 import java.io.IOException;
-import java.io.PrintWriter;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -30,8 +32,8 @@ public class IndexServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.setAttribute("errorSTR", "");
-        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
+        request.setAttribute(Parameters.LOG, LOGMessage.NULL);
+        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(Pages.INDEX);
         dispatcher.forward(request, response);
     }
 

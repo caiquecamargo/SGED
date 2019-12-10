@@ -5,6 +5,8 @@
  */
 package br.edu.ufabc.sged.model;
 
+import br.edu.ufabc.sged.dao.DataSource;
+import br.edu.ufabc.sged.dao.UsuarioDAO;
 import java.util.List;
 
 /**
@@ -22,8 +24,11 @@ public class Usuario implements java.io.Serializable{
     private List<Object> itens;
     
     public static final boolean exist(Usuario u){
-        if (u != null) return true;
-        return false;
+        return u != null;
+    }
+    
+    public boolean havePermission(Usuario userToEnable){
+        return (this.nivel_de_acesso > userToEnable.getNivel_de_acesso() || this.nivel_de_acesso == 0);
     }
 
     /**

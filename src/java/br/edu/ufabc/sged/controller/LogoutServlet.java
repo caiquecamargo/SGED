@@ -5,6 +5,7 @@
  */
 package br.edu.ufabc.sged.controller;
 
+import br.edu.ufabc.sged.util.Pages;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.RequestDispatcher;
@@ -33,7 +34,7 @@ public class LogoutServlet extends HttpServlet {
             throws ServletException, IOException {
         request.getSession().invalidate();
         
-        RequestDispatcher dispatcher = request.getServletContext().getRequestDispatcher("/index.jsp");
+        RequestDispatcher dispatcher = request.getServletContext().getRequestDispatcher(Pages.INDEX);
         dispatcher.forward(request, response);
     }
 

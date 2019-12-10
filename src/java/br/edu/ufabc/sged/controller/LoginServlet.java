@@ -8,7 +8,11 @@ package br.edu.ufabc.sged.controller;
 import br.edu.ufabc.sged.dao.DataSource;
 import br.edu.ufabc.sged.dao.UsuarioDAO;
 import br.edu.ufabc.sged.model.Usuario;
+import br.edu.ufabc.sged.util.LOGMessage;
+import br.edu.ufabc.sged.util.Pages;
+import br.edu.ufabc.sged.util.Parameters;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -25,37 +29,36 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-       
+        request = Parameters.setNullAttributesToRequest(request);
+        
         String user = request.getParameter("txt_user");
         String password = request.getParameter("txt_password");
         
-        Usuario incompleto = new Usuario();
-        incompleto.setEmail(user);
-        incompleto.setSenha(password);
+        Usuario userToLogin = new Usuario();
+        userToLogin.setEmail(user);
+        userToLogin.setSenha(password);
         
-        String page = "/login.jsp";
+        String page = Pages.LOGIN;
         
         try {
-            DataSource ds = new DataSource();
-            UsuarioDAO userDAO = new UsuarioDAO(ds);
-            List<Object> res = userDAO.login(incompleto);
+            DataSource datasource = new DataSource();
+            UsuarioDAO userDAO = new UsuarioDAO(datasource);
+            List<Object> res = userDAO.login(userToLogin);
             if (res != null && res.size()>0){
                 Usuario usuario = (Usuario) res.get(0);
                 if(usuario.getSituacao() != 0){
-                    page = "/home.jsp";
-                    request.getSession().setAttribute("usuario", usuario);
-                    request.setAttribute("errorSTR", "");
-                    request.setAttribute("pagina", "");
-                    request.setAttribute("objectList", res);
+                    page = Pages.HOME;
+                    request.getSession().setAttribute(Parameters.SESSION_NAME, usuario);
                 } else {
-                    request.setAttribute("errorSTR", "Usuario ainda não validado, consulte seu superior direto");
+                    request.setAttribute(Parameters.LOG, LOGMessage.NOT_VALIDATED_USER);
                 }
             } else {
-                request.setAttribute("errorSTR", "Usuario / Senha inválidos");
+                request.setAttribute(Parameters.LOG, LOGMessage.ERROR_LOGIN);
             }
-            ds.getConnection().close();
-        } catch (Exception e) {
-            request.setAttribute("errorSTR", "Erro ao recuperar");
+            datasource.getConnection().close();
+        } catch (RuntimeException | SQLException e) {
+            System.err.println(e.getMessage());
+            request.setAttribute(Parameters.LOG, LOGMessage.getErrorRecoveryMessage("usuário") + " " + LOGMessage.CONTACT_ADMINISTRATOR);
         }        
         
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(page);

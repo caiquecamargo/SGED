@@ -8,6 +8,7 @@ package br.edu.ufabc.sged.controller;
 import br.edu.ufabc.sged.dao.DataSource;
 import br.edu.ufabc.sged.dao.UsuarioDAO;
 import br.edu.ufabc.sged.model.Usuario;
+import br.edu.ufabc.sged.util.HomePageSelector;
 import br.edu.ufabc.sged.util.LOGMessage;
 import br.edu.ufabc.sged.util.Pages;
 import br.edu.ufabc.sged.util.Parameters;
@@ -39,12 +40,12 @@ public class EditUser extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        request = Parameters.setNullAttributesToRequest(request);
         Usuario usuario = (Usuario) request.getSession().getAttribute(Parameters.SESSION_NAME);
         String page = Pages.HOME;
         
         if (Usuario.exist(usuario)){
-            request.setAttribute(Parameters.PAGE_SELECTION, Pages.EDIT_USER);
-            request.setAttribute(Parameters.OBJECT_LIST, new ArrayList<>());
+            request.setAttribute(Parameters.PAGE_SELECTION, HomePageSelector.EDIT_USER);
         
             Usuario userToEditIncomplete = new Usuario();
             int idUsuario = Integer.parseInt(request.getParameter("txt_id_usuario"));

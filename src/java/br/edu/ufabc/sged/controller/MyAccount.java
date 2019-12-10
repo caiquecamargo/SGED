@@ -8,6 +8,9 @@ package br.edu.ufabc.sged.controller;
 import br.edu.ufabc.sged.dao.DataSource;
 import br.edu.ufabc.sged.dao.UsuarioDAO;
 import br.edu.ufabc.sged.model.Usuario;
+import br.edu.ufabc.sged.util.LOGMessage;
+import br.edu.ufabc.sged.util.Pages;
+import br.edu.ufabc.sged.util.Parameters;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
@@ -37,14 +40,14 @@ public class MyAccount extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        Usuario usuario = (Usuario) request.getSession().getAttribute("usuario");
-        request.setAttribute("errorSTR", "");
+        Usuario usuario = (Usuario) request.getSession().getAttribute(Parameters.SESSION_NAME);
+        request.setAttribute(Parameters.LOG, LOGMessage.NULL);
         
-        String page = "/minhaconta.jsp";
+        String page = Pages.MY_ACCOUNT;
         
-        if(usuario == null){
-            request.setAttribute("errorSTR", "Sessão expirada");
-            page = "/index.jsp";
+        if(!Usuario.exist(usuario)){
+            request.setAttribute(Parameters.LOG, LOGMessage.SESSION_EXPIRED);
+            page = Pages.INDEX;
         }
         
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(page);

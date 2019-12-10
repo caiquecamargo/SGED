@@ -10,6 +10,7 @@ import br.edu.ufabc.sged.dao.GrupoDAO;
 import br.edu.ufabc.sged.dao.UsuarioDAO;
 import br.edu.ufabc.sged.model.Grupo;
 import br.edu.ufabc.sged.model.Usuario;
+import br.edu.ufabc.sged.util.HomePageSelector;
 import br.edu.ufabc.sged.util.LOGMessage;
 import br.edu.ufabc.sged.util.Pages;
 import br.edu.ufabc.sged.util.Parameters;
@@ -40,13 +41,13 @@ public class AddGroup extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        request = Parameters.setNullAttributesToRequest(request);
+        
         Usuario usuario = (Usuario) request.getSession().getAttribute(Parameters.SESSION_NAME);
         String page = Pages.HOME;
         
-        if (usuario != null){
-            request.setAttribute(Parameters.LOG, LOGMessage.NULL);
-            request.setAttribute(Parameters.PAGE_SELECTION, Pages.ADD_GROUP);
-            request.setAttribute(Parameters.OBJECT_LIST, new ArrayList<>());
+        if (Usuario.exist(usuario)){
+            request.setAttribute(Parameters.PAGE_SELECTION, HomePageSelector.ADD_GROUP);
         } else {
             request.setAttribute(Parameters.LOG, LOGMessage.SESSION_EXPIRED);
             page = Pages.INDEX;
@@ -88,7 +89,7 @@ public class AddGroup extends HttpServlet {
                 UsuarioDAO userdao = new UsuarioDAO(datasource);
                 userdao.setGrupoFromUsuario(usuario, grupo);
                 request.setAttribute(Parameters.LOG, LOGMessage.getSuccessfulAddingMessage("Grupo"));
-                request.setAttribute(Parameters.PAGE_SELECTION, Pages.NULL);
+                request.setAttribute(Parameters.PAGE_SELECTION, HomePageSelector.NULL);
                 request.setAttribute(Parameters.OBJECT_LIST, new ArrayList<>());
                 datasource.getConnection().close();
             } catch (RuntimeException | SQLException e) {

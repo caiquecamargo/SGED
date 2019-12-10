@@ -6,6 +6,7 @@
 package br.edu.ufabc.sged.controller;
 
 import br.edu.ufabc.sged.model.Usuario;
+import br.edu.ufabc.sged.util.HomePageSelector;
 import br.edu.ufabc.sged.util.LOGMessage;
 import br.edu.ufabc.sged.util.Pages;
 import br.edu.ufabc.sged.util.Parameters;
@@ -35,14 +36,12 @@ public class AddItem extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        request = Parameters.setNullAttributesToRequest(request);
         Usuario usuario = (Usuario) request.getSession().getAttribute(Parameters.SESSION_NAME);
         String page = Pages.HOME;
         
-        if (usuario != null){
-            ArrayList<Object> list = new ArrayList<>();
-            request.setAttribute(Parameters.LOG, LOGMessage.NULL);
-            request.setAttribute(Parameters.PAGE_SELECTION, Pages.ADD_ITEM);
-            request.setAttribute(Parameters.OBJECT_LIST, list);
+        if (Usuario.exist(usuario)){
+            request.setAttribute(Parameters.PAGE_SELECTION, HomePageSelector.ADD_ITEM);
         } else {
             request.setAttribute(Parameters.LOG, LOGMessage.SESSION_EXPIRED);
             page = Pages.INDEX;

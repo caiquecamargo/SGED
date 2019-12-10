@@ -7,13 +7,14 @@ package br.edu.ufabc.sged.controller;
 
 import br.edu.ufabc.sged.dao.DataSource;
 import br.edu.ufabc.sged.dao.UsuarioDAO;
-import br.edu.ufabc.sged.model.Item;
 import br.edu.ufabc.sged.model.Usuario;
+import br.edu.ufabc.sged.util.HomePageSelector;
+import br.edu.ufabc.sged.util.LOGMessage;
+import br.edu.ufabc.sged.util.Pages;
+import br.edu.ufabc.sged.util.Parameters;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -38,31 +39,26 @@ public class ViewItem extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String page = "/home.jsp";
-        Usuario usuario = (Usuario) request.getSession().getAttribute("usuario");
-        ArrayList<Object> list = new ArrayList<>();
-        request.setAttribute("errorSTR", "");
-        request.setAttribute("pagina", "");
-        request.setAttribute("objectList", list);
+        request = Parameters.setNullAttributesToRequest(request);
+        String page = Pages.HOME;
+        Usuario usuario = (Usuario) request.getSession().getAttribute(Parameters.SESSION_NAME);
         
-        if (usuario != null){
+        if (Usuario.exist(usuario)){
             DataSource datasource = new DataSource();
             UsuarioDAO usuariodao = new UsuarioDAO(datasource);
             try {
                 usuario.setItens(usuariodao.readUsuarioItem(usuario));
                 datasource.getConnection().close();
-                request.setAttribute("errorSTR", "Itens recuperados com sucesso");
-                request.setAttribute("pagina", "visualizar item");
-                request.setAttribute("objectList", usuario.getItens());
-            } catch (RuntimeException e) {
-                request.setAttribute("errorSTR", e.getMessage());
-            } catch (SQLException ex){
-                System.err.println("Erro ao recuperar items. "+ex.getMessage());
-                request.setAttribute("errorSTR", "Erro Desconhecido ao recuperar Item. Contate admistrador do sistema");
+                request.setAttribute(Parameters.LOG, LOGMessage.getSuccessfulRecoveryMessage("Itens"));
+                request.setAttribute(Parameters.PAGE_SELECTION, HomePageSelector.VIEW_ITENS);
+                request.setAttribute(Parameters.OBJECT_LIST, usuario.getItens());
+            } catch (RuntimeException | SQLException e) {
+                System.err.println(e.getMessage());
+                request.setAttribute(Parameters.LOG, LOGMessage.getErrorRecoveryMessage("itens") + " " + LOGMessage.CONTACT_ADMINISTRATOR);
             }
         } else {
-            request.setAttribute("errorSTR", "Sessão expirada");
-            page = "/index.jsp";
+            request.setAttribute(Parameters.LOG, LOGMessage.SESSION_EXPIRED);
+            page = Pages.INDEX;
         }
         
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(page);

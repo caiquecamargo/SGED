@@ -8,12 +8,12 @@ package br.edu.ufabc.sged.controller;
 import br.edu.ufabc.sged.dao.DataSource;
 import br.edu.ufabc.sged.dao.UsuarioDAO;
 import br.edu.ufabc.sged.model.Usuario;
+import br.edu.ufabc.sged.util.HomePageSelector;
 import br.edu.ufabc.sged.util.LOGMessage;
 import br.edu.ufabc.sged.util.Pages;
 import br.edu.ufabc.sged.util.Parameters;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -38,13 +38,13 @@ public class ViewUsers extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {      
+            throws ServletException, IOException {
+        request = Parameters.setNullAttributesToRequest(request);
         Usuario usuario = (Usuario) request.getSession().getAttribute(Parameters.SESSION_NAME);
         String page = Pages.HOME;
         
         if (Usuario.exist(usuario)){
-            request.setAttribute(Parameters.PAGE_SELECTION, Pages.VIEW_USERS);
-            request.setAttribute(Parameters.OBJECT_LIST, new ArrayList<>());
+            request.setAttribute(Parameters.PAGE_SELECTION, HomePageSelector.VIEW_USERS);
             
             DataSource datasource = new DataSource();
             UsuarioDAO userDAO = new UsuarioDAO(datasource);

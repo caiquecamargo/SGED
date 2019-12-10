@@ -9,6 +9,7 @@ import br.edu.ufabc.sged.dao.DataSource;
 import br.edu.ufabc.sged.dao.GrupoDAO;
 import br.edu.ufabc.sged.model.Grupo;
 import br.edu.ufabc.sged.model.Usuario;
+import br.edu.ufabc.sged.util.HomePageSelector;
 import br.edu.ufabc.sged.util.LOGMessage;
 import br.edu.ufabc.sged.util.Pages;
 import br.edu.ufabc.sged.util.Parameters;
@@ -61,7 +62,7 @@ public class DeleteGroup extends HttpServlet {
         String page = Pages.HOME;
         
         if(usuario != null){
-            request.setAttribute(Parameters.PAGE_SELECTION, Pages.EDIT_GROUP);
+            request.setAttribute(Parameters.PAGE_SELECTION, HomePageSelector.EDIT_GROUP);
             request.setAttribute(Parameters.OBJECT_LIST, new ArrayList<>());
             
             DataSource datasource = new DataSource();

@@ -9,6 +9,7 @@ import br.edu.ufabc.sged.dao.DataSource;
 import br.edu.ufabc.sged.dao.GrupoDAO;
 import br.edu.ufabc.sged.model.Grupo;
 import br.edu.ufabc.sged.model.Usuario;
+import br.edu.ufabc.sged.util.HomePageSelector;
 import br.edu.ufabc.sged.util.LOGMessage;
 import br.edu.ufabc.sged.util.Pages;
 import br.edu.ufabc.sged.util.Parameters;
@@ -41,12 +42,12 @@ public class EditGroup extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        request = Parameters.setNullAttributesToRequest(request);
         Usuario usuario = (Usuario) request.getSession().getAttribute(Parameters.SESSION_NAME);
-        String page = Pages.EDIT_GROUP;
+        String page = HomePageSelector.EDIT_GROUP;
         
-        if (usuario != null){
-            request.setAttribute(Parameters.PAGE_SELECTION, Pages.EDIT_GROUP);
-            request.setAttribute(Parameters.OBJECT_LIST, new ArrayList<>());
+        if (Usuario.exist(usuario)){
+            request.setAttribute(Parameters.PAGE_SELECTION, HomePageSelector.EDIT_GROUP);
             
             Grupo GroupToEdit = new Grupo();
             int idGrupo = Integer.parseInt(request.getParameter("txt_id_grupo"));
@@ -84,12 +85,12 @@ public class EditGroup extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        request = Parameters.setNullAttributesToRequest(request);
         Usuario usuario = (Usuario) request.getSession().getAttribute(Parameters.SESSION_NAME);
         String page = Pages.HOME;
         
-        if (usuario != null){
-            request.setAttribute(Parameters.PAGE_SELECTION, Pages.EDIT_GROUP);
-            request.setAttribute(Parameters.OBJECT_LIST, new ArrayList<>());
+        if (Usuario.exist(usuario)){
+            request.setAttribute(Parameters.PAGE_SELECTION, HomePageSelector.EDIT_GROUP);
 
             Grupo  grupo     = new Grupo();
             int    idGrupo   = Integer.parseInt(request.getParameter("txt_id_grupo"));

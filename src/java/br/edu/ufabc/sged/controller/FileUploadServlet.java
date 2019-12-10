@@ -8,15 +8,14 @@ package br.edu.ufabc.sged.controller;
 import br.edu.ufabc.sged.dao.DataSource;
 import br.edu.ufabc.sged.dao.ItemDAO;
 import br.edu.ufabc.sged.dao.UsuarioDAO;
-import br.edu.ufabc.sged.model.Doc;
-import br.edu.ufabc.sged.model.Image;
 import br.edu.ufabc.sged.model.Item;
-import br.edu.ufabc.sged.model.Music;
-import br.edu.ufabc.sged.model.PDF;
 import br.edu.ufabc.sged.model.Usuario;
+import br.edu.ufabc.sged.util.HomePageSelector;
+import br.edu.ufabc.sged.util.LOGMessage;
+import br.edu.ufabc.sged.util.Pages;
+import br.edu.ufabc.sged.util.Parameters;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import javax.servlet.annotation.MultipartConfig;
@@ -41,8 +40,7 @@ import javax.servlet.http.Part;
 )
 public class FileUploadServlet extends HttpServlet {
     
-//    private static final long serialVersionUID = 205242440643911308L;
-    private static final String UPLOAD_DIR = "uploads";
+    private static final long serialVersionUID = 205242440643911308L;
 
     /**
      * Handles the HTTP <code>POST</code> method.
@@ -54,36 +52,23 @@ public class FileUploadServlet extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        
-        ArrayList<Object> list = new ArrayList<>();
-        request.setAttribute("errorSTR", "");
-        request.setAttribute("pagina", "");
-        request.setAttribute("objectList", list);
-        
-        Usuario usuario = (Usuario) request.getSession().getAttribute("usuario");
+            throws ServletException, IOException {        
+        request = Parameters.setNullAttributesToRequest(request);
+        Usuario usuario = (Usuario) request.getSession().getAttribute(Parameters.SESSION_NAME);
         String applicationPath = request.getServletContext().getRealPath("");
-        String uploadFilePath  = applicationPath + UPLOAD_DIR + File.separator + usuario.getId();
+        String uploadFilePath  = applicationPath + Parameters.UPLOAD_DIR + File.separator + usuario.getId();
         
-        String page = "/home.jsp";
+        String page = Pages.HOME;
         
-        if (usuario != null){
-            Item item = null;
-            Part part = request.getPart("file");               
+        if (Usuario.exist(usuario)){
+            request.setAttribute(Parameters.PAGE_SELECTION, HomePageSelector.ADD_ITEM);
+            
+            Part part = request.getPart("file");            
             String[] header = part.getHeader("content-type").split("/");
-            if(header[0].equals("application")){
-                if(header[1].equals("pdf")){
-                    item = new PDF();
-                } else if (header[1].equals("doc") || header[1].equals("docx")) {
-                    item = new Doc();
-                }
-            } else if (header[0].equals("image")){
-                item = new Image();
-            } else if (header[0].equals("audio")){
-                item = new Music();
-            }
-
-            if(item != null){
+            
+            try{
+                Item item = Item.getItemByHeader(header);
+                
                 uploadFilePath += File.separator + item.getTipo();
                 File fileSaveDir = new File(uploadFilePath);
                 if(!fileSaveDir.exists()){
@@ -103,22 +88,19 @@ public class FileUploadServlet extends HttpServlet {
                     dataSource.getConnection().close();
 
                     part.write(item.getSrc());
-                    request.setAttribute("errorSTR", "Arquivo carregado com sucesso no caminho: " + item.getSrc());
-                } catch (RuntimeException e){
-                    request.setAttribute("errorSTR", e.getMessage());
-                } catch (SQLException ex){
-                    System.err.println("Erro ao fechar conexão. "+ex.getMessage());
-                    request.setAttribute("errorSTR", "Erro ao inserir arquivo, contate administrado do sistema");
+                    request.setAttribute(Parameters.LOG, LOGMessage.getSuccessfulUploadFileMessage(item.getSrc()));
+                } catch (RuntimeException | SQLException e){
+                    System.err.println(e);
+                    request.setAttribute(Parameters.LOG, LOGMessage.ERROR_UPLOAD_FILE_MESSAGE + " " + LOGMessage.CONTACT_ADMINISTRATOR);
                 }
-            } else {
-                request.setAttribute("errorSTR", "Não foi possível realizar o Upload, tipo de arquivo não suportado");
+            } catch (RuntimeException e) {
+                System.err.println(e);
+                request.setAttribute(Parameters.LOG, LOGMessage.ERROR_RETURNING_ITEM_TYPE + " " + LOGMessage.CONTACT_ADMINISTRATOR);
             }    
         } else {
-            request.setAttribute("errorSTR", "Sessão expirada");
-            page = "/index.jsp";
+            request.setAttribute(Parameters.LOG, LOGMessage.SESSION_EXPIRED);
+            page = Pages.INDEX;
         }
-
-        request.setAttribute("pagina", "adicionar item");
         
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(page);
         dispatcher.forward(request, response);

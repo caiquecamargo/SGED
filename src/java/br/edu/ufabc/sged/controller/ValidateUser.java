@@ -8,6 +8,7 @@ package br.edu.ufabc.sged.controller;
 import br.edu.ufabc.sged.dao.DataSource;
 import br.edu.ufabc.sged.dao.UsuarioDAO;
 import br.edu.ufabc.sged.model.Usuario;
+import br.edu.ufabc.sged.util.HomePageSelector;
 import br.edu.ufabc.sged.util.LOGMessage;
 import br.edu.ufabc.sged.util.Pages;
 import br.edu.ufabc.sged.util.Parameters;
@@ -39,11 +40,12 @@ public class ValidateUser extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        request = Parameters.setNullAttributesToRequest(request);
         Usuario usuario = (Usuario) request.getSession().getAttribute(Parameters.SESSION_NAME);
         String page = Pages.HOME;
         
-        if (usuario != null){
-            request.setAttribute(Parameters.PAGE_SELECTION, Pages.VIEW_USERS);
+        if (Usuario.exist(usuario)){
+            request.setAttribute(Parameters.PAGE_SELECTION, HomePageSelector.VIEW_USERS);
 
             DataSource datasource = new DataSource();
             UsuarioDAO userDAO = new UsuarioDAO(datasource);
@@ -58,9 +60,7 @@ public class ValidateUser extends HttpServlet {
                 datasource.getConnection().close();
             } catch (RuntimeException | SQLException e){
                 System.err.println(e.getMessage());
-                request.setAttribute(Parameters.LOG, e.getMessage());
-                request.setAttribute(Parameters.PAGE_SELECTION, Pages.NULL);
-                request.setAttribute(Parameters.OBJECT_LIST, new ArrayList<>());
+                request.setAttribute(Parameters.LOG, LOGMessage.getErrorRecoveryMessage("usuários") + " " + LOGMessage.CONTACT_ADMINISTRATOR);
             }
         } else {
             request.setAttribute(Parameters.LOG, LOGMessage.SESSION_EXPIRED);
@@ -74,6 +74,40 @@ public class ValidateUser extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        request = Parameters.setNullAttributesToRequest(request);
+        Usuario usuario = (Usuario) request.getSession().getAttribute(Parameters.SESSION_NAME);
+        String page = Pages.HOME;
         
+        if (Usuario.exist(usuario)){
+            request.setAttribute(Parameters.PAGE_SELECTION, HomePageSelector.VALIDATE_USER);
+            
+            Usuario incompleteUserToEnable = new Usuario();        
+            int idEnableUsuario = Integer.parseInt(request.getParameter("txt_id_usuario"));
+            int nivel_de_acesso = Integer.parseInt(request.getParameter("txt_nivel_de_acesso"));
+            incompleteUserToEnable.setId(idEnableUsuario);
+            incompleteUserToEnable.setNivel_de_acesso(nivel_de_acesso);
+            
+            try{
+                DataSource datasource = new DataSource();
+                UsuarioDAO userDAO = new UsuarioDAO(datasource);
+                Usuario enabledUser = (Usuario) userDAO.read(incompleteUserToEnable).get(0);
+                if (usuario.havePermission(enabledUser)) {
+                    userDAO.enableUser(enabledUser);
+                    request.setAttribute(Parameters.LOG, LOGMessage.SUCCESSFUL_VALIDATE_USER_MESSAGE);
+                } else {
+                    request.setAttribute(Parameters.LOG, LOGMessage.USER_WITHOUT_PERMISSION);
+                }
+                datasource.getConnection().close();
+            } catch (RuntimeException | SQLException e){
+                System.err.println(e.getMessage());
+                request.setAttribute(Parameters.LOG, LOGMessage.ERROR_VALIDATE_USER_MESSAGE + " " + LOGMessage.CONTACT_ADMINISTRATOR);
+            }
+        } else {
+            request.setAttribute(Parameters.LOG, LOGMessage.SESSION_EXPIRED);
+            page = Pages.INDEX;
+        }
+        
+        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(page);
+        dispatcher.forward(request, response);
     }
 }

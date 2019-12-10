@@ -17,6 +17,18 @@ public final class LOGMessage {
     public static final String ERROR_CREATE_USER = "Erro ao criar usuário.";
     public static final String CONTACT_ADMINISTRATOR = "Entre em contato com o admistrador do sistema.";
     public static final String ERROR_RETURNING_ITEM_TYPE = "Erro ao retornar tipo do arquivo";
+    public static final String ERROR_UPLOAD_FILE_MESSAGE = "Erro ao carregar arquivo";
+    public static final String SUCCESSFUL_VALIDATE_USER_MESSAGE = "Usuário validado com sucesso";
+    public static final String ERROR_VALIDATE_USER_MESSAGE = "Erro ao validar usuário";
+    public static final String USER_WITHOUT_PERMISSION = "Sem autorização para realizar a tarefa";
+    public static final String NOT_VALIDATED_USER = "Usuário ainda não validado, consulte seu superior direto";
+    public static final String ERROR_LOGIN = "Usuário ou senha inválidos";
+    public static final String SUCCESSFUL_RECOVERY_GROUP_MEMBERS = "Membros do grupo recuperados com sucesso";
+    public static final String ERROR_RECOVERY_GROUP_MEMBERS = "Erro ao recuperar membros do grupo";
+    
+    public static final String getSuccessfulUploadFileMessage(String m){
+        return "Arquivo carregado com sucesso no caminho " + m;
+    }
     
     public static final String getSuccessfulAddingMessage(String m){
         return m + " adicionado com sucesso.";

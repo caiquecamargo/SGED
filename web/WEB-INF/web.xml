@@ -53,10 +53,6 @@
         <servlet-class>br.edu.ufabc.sged.controller.LogoutServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>HabilitarUSuario</servlet-name>
-        <servlet-class>br.edu.ufabc.sged.controller.HabilitarUSuario</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>DeleteGroup</servlet-name>
         <servlet-class>br.edu.ufabc.sged.controller.DeleteGroup</servlet-class>
     </servlet>
@@ -135,10 +131,6 @@
     <servlet-mapping>
         <servlet-name>LogoutServlet</servlet-name>
         <url-pattern>/logoutservlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>HabilitarUSuario</servlet-name>
-        <url-pattern>/habilitarusuario</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>DeleteGroup</servlet-name>
