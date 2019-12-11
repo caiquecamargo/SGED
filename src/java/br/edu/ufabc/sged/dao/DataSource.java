@@ -31,7 +31,7 @@ public class DataSource {
             connection = DriverManager.getConnection(URL, username, password);
             System.out.println("Data Source created");
         }catch(SQLException ex){
-            System.out.println("Erro ao conectar - " + ex.getMessage());
+            System.err.println("Erro ao conectar - " + ex.getMessage());
         }
     }
     

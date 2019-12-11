@@ -25,6 +25,7 @@ public final class LOGMessage {
     public static final String ERROR_LOGIN = "Usuário ou senha inválidos";
     public static final String SUCCESSFUL_RECOVERY_GROUP_MEMBERS = "Membros do grupo recuperados com sucesso";
     public static final String ERROR_RECOVERY_GROUP_MEMBERS = "Erro ao recuperar membros do grupo";
+    public static final String USER_EXIST = "Usuário existente";
     
     public static final String getSuccessfulUploadFileMessage(String m){
         return "Arquivo carregado com sucesso no caminho " + m;
@@ -60,5 +61,9 @@ public final class LOGMessage {
     
     public static final String getErrorUpdatingMessage(String m){
         return "Erro ao atualizar " + m;
+    }
+    
+    public static final String getInvalidModelObjectMessage(String m){
+        return "Invalid " + m + " model Object";
     }
 }

@@ -6,6 +6,7 @@
 package br.edu.ufabc.sged.dao;
 
 import br.edu.ufabc.sged.model.Item;
+import br.edu.ufabc.sged.util.LOGMessage;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,37 +19,32 @@ import java.util.List;
  */
 public class ItemDAO implements GenericDAO{
     private final DataSource dataSource;
+    private static final String CREATE_SQL = "INSERT INTO tblitem VALUES (null, ?, ?, ?, ?)";
+    private static final String DELETE_SQL = "DELETE FROM tblitem where idItem = ?";
+    private static final String DELETE_RELATIONSHIP_SQL = "DELETE FROM tblusuarioitem where idItem = ?";
     
     public ItemDAO (DataSource dataSource){
         this.dataSource = dataSource;
     }
 
     @Override
-    public void create(Object o) {
-        try {
-            if(o instanceof Item){
-                Item item = (Item) o;
-                String SQL = "INSERT INTO tblitem VALUES (null, ?, ?, ?, ?)";
-                try (PreparedStatement stm = dataSource.getConnection().prepareStatement(SQL, Statement.RETURN_GENERATED_KEYS)) {
-                    stm.setString(1, item.getTipo());
-                    stm.setString(2, item.getNome());
-                    stm.setString(3, item.getRestricoes());
-                    stm.setString(4, item.getSrc());
-                    int res = stm.executeUpdate();
-                    if (res != 0){
-                        try (ResultSet rs = stm.getGeneratedKeys()) {
-                            if (rs.next()){
-                                item.setId(rs.getInt(1));
-                            }
-                        }
+    public void create(Object o) throws RuntimeException, SQLException {
+        if(o instanceof Item){
+            Item item = (Item) o;
+            try (PreparedStatement preparedStatement = dataSource.getConnection().prepareStatement(CREATE_SQL, Statement.RETURN_GENERATED_KEYS)) {
+                preparedStatement.setString(1, item.getTipo());
+                preparedStatement.setString(2, item.getNome());
+                preparedStatement.setString(3, item.getRestricoes());
+                preparedStatement.setString(4, item.getSrc());
+                int resultQuery = preparedStatement.executeUpdate();
+                if (resultQuery != 0){
+                    try (ResultSet resultSet = preparedStatement.getGeneratedKeys()) {
+                        if (resultSet.next()) item.setId(resultSet.getInt(1));
                     }
                 }
-            } else {
-                throw new RuntimeException("Invalid Item Model Object");
             }
-        } catch (SQLException ex) {
-            System.err.println("Erro ao inserir item "+ex.getMessage() + " " + ex.getErrorCode());
-            throw new RuntimeException("Erro ao inserir item, contate o administrador do sistema");
+        } else {
+            throw new RuntimeException(LOGMessage.getInvalidModelObjectMessage("Item"));
         }
     }
 
@@ -58,21 +54,15 @@ public class ItemDAO implements GenericDAO{
     }
 
     @Override
-    public void delete(Object o) {
-        try {
-            if(o instanceof Item){
-                Item item = (Item) o;
-                String SQL = "DELETE FROM tblitem where idItem = ?";
-                try (PreparedStatement stm = dataSource.getConnection().prepareStatement(SQL)) {
-                    stm.setInt(1, item.getId());
-                    stm.executeUpdate();
-                }
-            } else {
-                throw new RuntimeException("Invalid Item Model Object");
+    public void delete(Object o) throws RuntimeException, SQLException{
+        if(o instanceof Item){
+            Item item = (Item) o;
+            try (PreparedStatement preparedStatement = dataSource.getConnection().prepareStatement(DELETE_SQL)) {
+                preparedStatement.setInt(1, item.getId());
+                preparedStatement.executeUpdate();
             }
-        } catch (SQLException ex) {
-            System.err.println("Erro ao deletar item "+ex.getMessage() + " " + ex.getErrorCode());
-            throw new RuntimeException("Erro ao deletar item, contate administrador do sistema");
+        } else {
+            throw new RuntimeException(LOGMessage.getInvalidModelObjectMessage("Item"));
         }
     }
 
@@ -81,21 +71,15 @@ public class ItemDAO implements GenericDAO{
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
-    public void deleteRelationship(Object o){
-        try {
-            if(o instanceof Item){
-                Item item = (Item) o;
-                String SQL = "DELETE FROM tblusuarioitem where idItem = ?";
-                try (PreparedStatement stm = dataSource.getConnection().prepareStatement(SQL)) {
-                    stm.setInt(1, item.getId());
-                    stm.executeUpdate();
-                }
-            } else {
-                throw new RuntimeException("Invalid Item Model Object");
+    public void deleteRelationship(Object o) throws RuntimeException, SQLException{
+        if(o instanceof Item){
+            Item item = (Item) o;
+            try (PreparedStatement preparedStatement = dataSource.getConnection().prepareStatement(DELETE_RELATIONSHIP_SQL)) {
+                preparedStatement.setInt(1, item.getId());
+                preparedStatement.executeUpdate();
             }
-        } catch (SQLException ex) {
-            System.err.println("Erro ao deletar item "+ex.getMessage() + " " + ex.getErrorCode());
-            throw new RuntimeException("Erro ao deletar item, contate administrador do sistema");
+        } else {
+            throw new RuntimeException(LOGMessage.getInvalidModelObjectMessage("Item"));
         }
     }
 }

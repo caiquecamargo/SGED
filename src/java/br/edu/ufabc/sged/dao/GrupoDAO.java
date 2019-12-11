@@ -7,6 +7,7 @@ package br.edu.ufabc.sged.dao;
 
 import br.edu.ufabc.sged.model.Grupo;
 import br.edu.ufabc.sged.model.Usuario;
+import br.edu.ufabc.sged.util.LOGMessage;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -20,156 +21,123 @@ import java.util.List;
  */
 public class GrupoDAO implements GenericDAO{
     private final DataSource dataSource;
+    private static final String INSERT_SQL = "INSERT INTO tblgrupo values (null, ?, ?, ?)";
+    private static final String UPDATE_SQL = "UPDATE tblgrupo   SET nome = ?, descricao = ?, nivel = ? WHERE idGrupo = ?";
+    private static final String DELETE_SQL = "DELETE FROM tblgrupo where idGrupo = ?";
+    private static final String READ_SQL   = "SELECT * FROM tblgrupo where idGrupo = ?";
+    private static final String DELETE_RELATIONSHIP_SQL = "DELETE FROM tblusuariogrupo where idGrupo = ?";
+    private static final String READ_MEMBERS_SQL = "SELECT tblusuario.idUsuario, tblusuario.nome, tblusuario.email, tblusuario.nivelDeAcesso, tblusuario.situacao FROM tblusuariogrupo INNER JOIN tblusuario ON tblusuariogrupo.idUsuario = tblusuario.idUsuario WHERE tblusuariogrupo.idGrupo = ?";
     
     public GrupoDAO (DataSource dataSource){
         this.dataSource = dataSource;
     }
 
     @Override
-    public void create(Object o) {
-        try {
-            if(o instanceof Grupo){
-                String SQL = "INSERT INTO tblgrupo values (null, ?, ?, ?)";
-                try (PreparedStatement stm = dataSource.getConnection().prepareStatement(SQL, Statement.RETURN_GENERATED_KEYS)) {
-                    Grupo grupo = (Grupo) o;
-                    stm.setString(1, grupo.getNome());
-                    stm.setString(2, grupo.getDescricao());
-                    stm.setInt(3, grupo.getNivel());
-                    int res = stm.executeUpdate();
-                    if (res != 0){
-                        try (ResultSet rs = stm.getGeneratedKeys()) {
-                            if (rs.next()){
-                                grupo.setId(rs.getInt(1));
-                            }
-                        }
+    public void create(Object o) throws RuntimeException, SQLException {
+        if(o instanceof Grupo){
+            try (PreparedStatement preparedStatement = dataSource.getConnection().prepareStatement(INSERT_SQL, Statement.RETURN_GENERATED_KEYS)) {
+                Grupo grupo = (Grupo) o;
+                preparedStatement.setString(1, grupo.getNome());
+                preparedStatement.setString(2, grupo.getDescricao());
+                preparedStatement.setInt(3, grupo.getNivel());
+                int resultQuery = preparedStatement.executeUpdate();
+                if (resultQuery != 0){
+                    try (ResultSet resultSet = preparedStatement.getGeneratedKeys()) {
+                        if (resultSet.next()) grupo.setId(resultSet.getInt(1));
                     }
                 }
-            } else {
-                throw new RuntimeException("Invalid Group Model Object");
             }
-        } catch (SQLException ex) {
-            System.err.println("Erro ao inserir grupo "+ex.getMessage() + " " + ex.getErrorCode());
-            throw new RuntimeException("Erro ao adicionar grupo, contate administrador do sistema");
+        } else {
+            throw new RuntimeException(LOGMessage.getInvalidModelObjectMessage("Group"));
         }
     }
 
     @Override
-    public void update(Object o) {
-        try {
-            if(o instanceof Grupo){
-                Grupo grupo = (Grupo) o;
-                String SQL = "UPDATE tblgrupo   SET nome = ?, descricao = ?, nivel = ? WHERE idGrupo = ?";
-                try(PreparedStatement stm = dataSource.getConnection().prepareStatement(SQL)){
-                    stm.setString(1, grupo.getNome());
-                    stm.setString(2, grupo.getDescricao());
-                    stm.setInt(3, grupo.getNivel());
-                    stm.setInt(4, grupo.getId());
-                    stm.executeUpdate();
-                }
-            } else {
-                throw new RuntimeException("Invalid Group Model Object");
+    public void update(Object o) throws RuntimeException, SQLException{
+        if(o instanceof Grupo){
+            Grupo grupo = (Grupo) o;
+            try(PreparedStatement preparedStatement = dataSource.getConnection().prepareStatement(UPDATE_SQL)){
+                preparedStatement.setString(1, grupo.getNome());
+                preparedStatement.setString(2, grupo.getDescricao());
+                preparedStatement.setInt(3, grupo.getNivel());
+                preparedStatement.setInt(4, grupo.getId());
+                preparedStatement.executeUpdate();
             }
-        } catch (SQLException ex) {
-            System.err.println(ex.getMessage());
-            throw new RuntimeException("Erro ao ler Grupo. Contate administrador do sistema");
+        } else {
+            throw new RuntimeException(LOGMessage.getInvalidModelObjectMessage("Group"));
         }
     }
 
     @Override
-    public void delete(Object o) {
-        try {
-            if(o instanceof Grupo){
-                Grupo grupo = (Grupo) o;
-                String SQL = "DELETE FROM tblgrupo where idGrupo = ?";
-                try (PreparedStatement stm = dataSource.getConnection().prepareStatement(SQL)) {
-                    stm.setInt(1, grupo.getId());
-                    stm.executeUpdate();
-                }
-            } else {
-                throw new RuntimeException("Invalid Grupo Model Object");
+    public void delete(Object o) throws RuntimeException, SQLException {
+        if(o instanceof Grupo){
+            Grupo grupo = (Grupo) o;
+            try (PreparedStatement preparedStatement = dataSource.getConnection().prepareStatement(DELETE_SQL)) {
+                preparedStatement.setInt(1, grupo.getId());
+                preparedStatement.executeUpdate();
             }
-        } catch (SQLException ex) {
-            System.err.println("Erro ao deletar grupo "+ex.getMessage() + " " + ex.getErrorCode());
-            throw new RuntimeException("Erro ao deletar grupo, contate administrador do sistema");
+        } else {
+            throw new RuntimeException(LOGMessage.getInvalidModelObjectMessage("Group"));
         }
     }
 
     @Override
-    public List<Object> read(Object o) {
-        try {
-            if(o instanceof Grupo){
-                Grupo grupo = (Grupo) o;
-                String SQL = "SELECT * FROM tblgrupo where idGrupo = ?";
-                try(PreparedStatement stm = dataSource.getConnection().prepareStatement(SQL)){
-                    stm.setInt(1, grupo.getId());
-                    try(ResultSet rs = stm.executeQuery()){
-                        ArrayList<Object> result = new ArrayList<>();
-                        while(rs.next()){
-                            Grupo g = new Grupo();
-                            g.setId(rs.getInt("idGrupo"));
-                            g.setNome(rs.getString("nome"));
-                            g.setDescricao(rs.getString("descricao"));
-                            g.setNivel(rs.getInt("nivel"));
-                            result.add(g);
-                        }
-                        return result;
+    public List<Object> read(Object o) throws RuntimeException, SQLException {
+        if(o instanceof Grupo){
+            Grupo grupo = (Grupo) o;
+            try(PreparedStatement preparedStatement = dataSource.getConnection().prepareStatement(READ_SQL)){
+                preparedStatement.setInt(1, grupo.getId());
+                try(ResultSet resultSet = preparedStatement.executeQuery()){
+                    ArrayList<Object> listGroups = new ArrayList<>();
+                    while(resultSet.next()){
+                        Grupo readGroup = new Grupo();
+                        readGroup.setId(resultSet.getInt("idGrupo"));
+                        readGroup.setNome(resultSet.getString("nome"));
+                        readGroup.setDescricao(resultSet.getString("descricao"));
+                        readGroup.setNivel(resultSet.getInt("nivel"));
+                        listGroups.add(readGroup);
                     }
+                    return listGroups;
                 }
-            } else {
-                throw new RuntimeException("Invalid Group Model Object");
             }
-        } catch (SQLException ex) {
-            System.err.println(ex.getMessage());
-            throw new RuntimeException("Erro ao ler Grupo. Contate administrador do sistema");
+        } else {
+            throw new RuntimeException(LOGMessage.getInvalidModelObjectMessage("Group"));
         }
     }
 
-    public void deleteRelationship(Object o){
-        try {
-            if(o instanceof Grupo){
-                Grupo grupo = (Grupo) o;
-                String SQL = "DELETE FROM tblusuariogrupo where idGrupo = ?";
-                PreparedStatement stm = dataSource.getConnection().prepareStatement(SQL);
-                stm.setInt(1, grupo.getId());
-                stm.executeUpdate();
-                stm.close();
-            } else {
-                throw new RuntimeException("Invalid Grupo Model Object");
+    public void deleteRelationship(Object o) throws RuntimeException, SQLException{
+        if(o instanceof Grupo){
+            Grupo grupo = (Grupo) o;
+            try (PreparedStatement preparedStatement = dataSource.getConnection().prepareStatement(DELETE_RELATIONSHIP_SQL)) {
+                preparedStatement.setInt(1, grupo.getId());
+                preparedStatement.executeUpdate();
             }
-        } catch (SQLException ex) {
-            System.err.println("Erro ao deletar grupo "+ex.getMessage() + " " + ex.getErrorCode());
-            throw new RuntimeException("Erro ao deletar grupo, contate administrador do sistema");
+        } else {
+            throw new RuntimeException(LOGMessage.getInvalidModelObjectMessage("Group"));
         }
     }
     
-    public List<Object> readMembers(Object o){
-        try {
-            if(o instanceof Grupo){
-                Grupo grupo = (Grupo) o;
-                String SQL = "SELECT tblusuario.idUsuario, tblusuario.nome, tblusuario.email, tblusuario.nivelDeAcesso, tblusuario.situacao FROM tblusuariogrupo INNER JOIN tblusuario ON tblusuariogrupo.idUsuario = tblusuario.idUsuario WHERE tblusuariogrupo.idGrupo = ?";
-                ArrayList<Object> result;
-                try (PreparedStatement stm = dataSource.getConnection().prepareStatement(SQL)) {
-                    stm.setInt(1, grupo.getId());
-                    try (ResultSet rs = stm.executeQuery()) {
-                        result = new ArrayList<>();
-                        while(rs.next()){
-                            Usuario user = new Usuario();
-                            user.setId(rs.getInt("idUsuario"));
-                            user.setNome(rs.getString("nome"));
-                            user.setEmail(rs.getString("email"));
-                            user.setNivel_de_acesso(rs.getInt("nivelDeAcesso"));
-                            user.setSituacao(rs.getInt("situacao"));
-                            result.add(user);
-                        }
+    public List<Object> readMembers(Object o) throws RuntimeException, SQLException{
+        if(o instanceof Grupo){
+            Grupo grupo = (Grupo) o;
+            try (PreparedStatement preparedStatement = dataSource.getConnection().prepareStatement(READ_MEMBERS_SQL)) {
+                preparedStatement.setInt(1, grupo.getId());
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    ArrayList<Object> listMembers = new ArrayList<>();
+                    while(resultSet.next()){
+                        Usuario user = new Usuario();
+                        user.setId(resultSet.getInt("idUsuario"));
+                        user.setNome(resultSet.getString("nome"));
+                        user.setEmail(resultSet.getString("email"));
+                        user.setNivel_de_acesso(resultSet.getInt("nivelDeAcesso"));
+                        user.setSituacao(resultSet.getInt("situacao"));
+                        listMembers.add(user);
                     }
+                    return listMembers;
                 }
-                return result;
-            } else {
-                throw new RuntimeException("Invalid Group Model Object");
             }
-        } catch (SQLException ex) {
-            System.err.println("Erro ao recuperar usuarios do grupo. "+ex.getMessage());
-            throw new RuntimeException("Erro ao recuperar usuarios do grupo.");
+        } else {
+            throw new RuntimeException(LOGMessage.getInvalidModelObjectMessage("Group"));
         }
     }
 }

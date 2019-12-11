@@ -15,7 +15,6 @@ import br.edu.ufabc.sged.util.Pages;
 import br.edu.ufabc.sged.util.Parameters;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -44,7 +43,7 @@ public class EditGroup extends HttpServlet {
             throws ServletException, IOException {
         request = Parameters.setNullAttributesToRequest(request);
         Usuario usuario = (Usuario) request.getSession().getAttribute(Parameters.SESSION_NAME);
-        String page = HomePageSelector.EDIT_GROUP;
+        String page = Pages.HOME;
         
         if (Usuario.exist(usuario)){
             request.setAttribute(Parameters.PAGE_SELECTION, HomePageSelector.EDIT_GROUP);
