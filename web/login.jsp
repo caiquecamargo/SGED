@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 <jsp:useBean id="errorSTR" type="java.lang.String" scope="request"/>
+<jsp:useBean id="pagina" type="java.lang.String" scope="request"/>
+<jsp:useBean id="objectList" type="java.util.List<Object>" scope="request"/>
 <%@taglib uri="http://java.sun.com/jstl/core_rt" prefix="c" %>
 <html lang="pt-br">
 <head>

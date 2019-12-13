@@ -1,0 +1,32 @@
+<!-- title -->
+<h1 class="titulo">Seus arquivos</h1>
+<!-- title -->
+<!-- header -->
+<div class="lista-item">
+    <div class="trigger-wrapper">
+        <div class="trigger-label">
+            <h3 class="column-name">Nome</h3>
+            <h3 class="column-name">Tipo</h3>
+            <h3 class="column-name">SRC</h3>
+        </div>
+    </div>
+</div>
+<!-- header -->
+<!-- content -->
+<div class="lista-item">
+    <input type="checkbox" class="trigger-input" id="?id?">
+    <div class="trigger-wrapper">
+        <label for="?id?" class="trigger-label">
+            <h3 class="trigger-nome">?nome?</h3>
+            <h3 class="trigger-tipo">?tipo?</h3>
+            <h3 class="trigger-src">?src?</h3>
+        </label>
+        <form action="deleteitem" method="POST" class="form-trigger">
+            <input value="?id?" name="txt_id_item" class="notdisplay">
+            <input value="?src?" name="txt_src" class="notdisplay">
+            <input value="?tipo?" name="txt_tipo" class="notdisplay">
+            <button class="trigger-conteudo" type="submit">Excluir</button>
+        </form>
+    </div>
+</div>
+<!-- content -->

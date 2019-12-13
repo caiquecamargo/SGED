@@ -24,7 +24,9 @@ public class NewUser extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.setAttribute(Parameters.LOG, LOGMessage.NULL);
+        request = Parameters.setNullAttributesToRequest(request);
+        request.setAttribute(Parameters.LOG, "To passando essa mensagem");
+        System.out.println("Vim pelo NewUser");
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(Pages.NEW_USER);
         dispatcher.forward(request, response);
     }

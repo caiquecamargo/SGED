@@ -10,6 +10,7 @@ package br.edu.ufabc.sged.util;
  * @author Caique
  */
 public final class HomePageSelector {
+    public static final String NULL               = "";
     public static final String ADD_ITEM           = "adicionar item";
     public static final String VIEW_ITENS         = "visualizar item";
     public static final String ADD_GROUP          = "adicionar grupo";
@@ -19,5 +20,4 @@ public final class HomePageSelector {
     public static final String VALIDATE_USER      = "validar usuario";
     public static final String VIEW_USERS         = "visualizar usuarios";
     public static final String EDIT_USER          = "editar usuario";
-    public static final String NULL               = "";
 }

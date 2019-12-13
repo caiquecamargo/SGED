@@ -43,6 +43,7 @@
       </ul>
     </nav>
         <main class="content">
+            ${pagina}
              <c:if test="${pagina == 'adicionar item'}">
                 <h1 class="titulo">Adicionar novos itens</h1>
                 <form action="fileuploadservlet" method="POST" enctype="multipart/form-data" class="draganddrop">

@@ -8,7 +8,12 @@ package br.edu.ufabc.sged.controller;
 import br.edu.ufabc.sged.util.LOGMessage;
 import br.edu.ufabc.sged.util.Pages;
 import br.edu.ufabc.sged.util.Parameters;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.util.Collection;
+import java.util.Enumeration;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -32,7 +37,7 @@ public class IndexServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.setAttribute(Parameters.LOG, LOGMessage.NULL);
+        //request.setAttribute(Parameters.LOG, LOGMessage.NULL);
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(Pages.INDEX);
         dispatcher.forward(request, response);
     }
@@ -49,8 +54,25 @@ public class IndexServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        System.out.println("Fazendo o for do request");
+        for (Enumeration<String> e = request.getAttributeNames(); e.hasMoreElements();){
+            String a = e.nextElement();
+            System.out.println(a + ": " + request.getAttribute(a));
+        }
+        System.out.println(request.getQueryString());
+        request = Parameters.setNullAttributesToRequest(request);
+        System.out.println("Fazendo o for do response");
+        response.getHeaderNames().forEach((e) -> {
+            System.out.println(e);
+        }); 
         request.setAttribute("errorSTR", "");
+        System.out.println("errorSTR: " + request.getAttribute("errorSTR"));
+        System.out.println("Chamei pelo GET");
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/login.jsp");
+        PrintWriter out = response.getWriter();
+        dispatcher.include(request, response);
+        out.println("<b>Testando umas bagatelas aqui</b>");
+        out.close();
         dispatcher.forward(request, response);
     }
 
@@ -65,6 +87,7 @@ public class IndexServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        System.out.println("Chamei pelo POST");
         processRequest(request, response);
     }
 

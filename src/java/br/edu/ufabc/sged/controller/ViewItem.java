@@ -7,6 +7,7 @@ package br.edu.ufabc.sged.controller;
 
 import br.edu.ufabc.sged.dao.DataSource;
 import br.edu.ufabc.sged.dao.UsuarioDAO;
+import br.edu.ufabc.sged.model.Item;
 import br.edu.ufabc.sged.model.Usuario;
 import br.edu.ufabc.sged.util.HomePageSelector;
 import br.edu.ufabc.sged.util.LOGMessage;
@@ -50,7 +51,39 @@ public class ViewItem extends HttpServlet {
                 usuario.setItens(usuariodao.readUsuarioItem(usuario));
                 datasource.getConnection().close();
                 request.setAttribute(Parameters.LOG, LOGMessage.getSuccessfulRecoveryMessage("Itens"));
-                request.setAttribute(Parameters.PAGE_SELECTION, HomePageSelector.VIEW_ITENS);
+                String paginaHeader = "<h1 class=\"titulo\">Seus arquivos</h1>\n" +
+"                <div class=\"lista-item\">\n" +
+"                    <div class=\"trigger-wrapper\">\n" +
+"                        <div class=\"trigger-label\">\n" +
+"                            <h3 class=\"column-name\">Nome</h3>\n" +
+"                            <h3 class=\"column-name\">Tipo</h3>\n" +
+"                            <h3 class=\"column-name\">SRC</h3>\n" +
+"                        </div>\n" +
+"                    </div>\n" +
+"                </div>\n";
+                String paginaContent = "";
+                for(Object e: usuario.getItens()){
+                    Item item = (Item) e;
+                    paginaContent += 
+        "                    <div class=\"lista-item\">\n" +
+        "                        <input type=\"checkbox\" class=\"trigger-input\" id=" + item.getId() +">\n" +
+        "                        <div class=\"trigger-wrapper\">\n" +
+        "                            <label for=" + item.getId() + " class=\"trigger-label\">\n" +
+        "                                <h3 class=\"trigger-nome\">" + item.getNome() + "</h3>\n" +
+        "                                <h3 class=\"trigger-tipo\">" + item.getTipo()+ "</h3>\n" +
+        "                                <h3 class=\"trigger-src\">" + item.getSrc()+ "</h3>\n" +
+        "                            </label>\n" +
+        "                            <form action=\"deleteitem\" method=\"POST\" class=\"form-trigger\">\n" +
+        "                                <input value="+ item.getId() +" name=\"txt_id_item\" class=\"notdisplay\">\n" +
+        "                                <input value="+ item.getSrc()+" name=\"txt_src\" class=\"notdisplay\">\n" +
+        "                                <input value="+ item.getTipo()+" name=\"txt_tipo\" class=\"notdisplay\">\n" +
+        "                                <button class=\"trigger-conteudo\" type=\"submit\">Excluir</button>\n" +
+        "                            </form>\n" +
+        "                        </div>\n" +
+        "                    </div>\n";
+                }
+                request.setAttribute(Parameters.PAGE_SELECTION, paginaHeader + paginaContent);
+                //request.setAttribute(Parameters.PAGE_SELECTION, HomePageSelector.VIEW_ITENS);
                 request.setAttribute(Parameters.OBJECT_LIST, usuario.getItens());
             } catch (RuntimeException | SQLException e) {
                 System.err.println(e.getMessage());
