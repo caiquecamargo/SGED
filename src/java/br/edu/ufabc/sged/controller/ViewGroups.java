@@ -8,6 +8,8 @@ package br.edu.ufabc.sged.controller;
 import br.edu.ufabc.sged.dao.DataSource;
 import br.edu.ufabc.sged.dao.UsuarioDAO;
 import br.edu.ufabc.sged.model.Usuario;
+import br.edu.ufabc.sged.util.AttributesListMaker;
+import br.edu.ufabc.sged.util.HTMLFactory;
 import br.edu.ufabc.sged.util.HomePageSelector;
 import br.edu.ufabc.sged.util.LOGMessage;
 import br.edu.ufabc.sged.util.Pages;
@@ -44,15 +46,18 @@ public class ViewGroups extends HttpServlet {
         Usuario usuario = (Usuario) request.getSession().getAttribute(Parameters.SESSION_NAME);
         
         if (Usuario.exist(usuario)){
-            request.setAttribute(Parameters.PAGE_SELECTION, HomePageSelector.VIEW_GROUPS);
-            
             DataSource datasource = new DataSource();
             UsuarioDAO usuariodao = new UsuarioDAO(datasource);
             try {
                 usuario.setGrupo(usuariodao.readGrupoFromUsuario(usuario));
                 datasource.getConnection().close();
+                
+                String applicationPath = request.getServletContext().getRealPath("");
+                ArrayList<ArrayList<String>> attributesList = AttributesListMaker.getAttributesList(usuario.getGrupo());
+                String pageSelector = HTMLFactory.getFormattedHTML(HomePageSelector.VIEW_GROUPS, applicationPath, attributesList);
+                
+                request.setAttribute(Parameters.PAGE_SELECTION, pageSelector);
                 request.setAttribute(Parameters.LOG, LOGMessage.getSuccessfulRecoveryMessage("Grupos"));
-                request.setAttribute(Parameters.OBJECT_LIST, usuario.getGrupo());
             } catch (RuntimeException | SQLException e) {
                 System.err.println(e.getMessage());
                 request.setAttribute(Parameters.LOG, LOGMessage.getErrorRecoveryMessage("grupos") + " " + LOGMessage.CONTACT_ADMINISTRATOR);

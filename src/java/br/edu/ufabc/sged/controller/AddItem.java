@@ -6,6 +6,7 @@
 package br.edu.ufabc.sged.controller;
 
 import br.edu.ufabc.sged.model.Usuario;
+import br.edu.ufabc.sged.util.HTMLFactory;
 import br.edu.ufabc.sged.util.HomePageSelector;
 import br.edu.ufabc.sged.util.LOGMessage;
 import br.edu.ufabc.sged.util.Pages;
@@ -41,7 +42,9 @@ public class AddItem extends HttpServlet {
         String page = Pages.HOME;
         
         if (Usuario.exist(usuario)){
-            request.setAttribute(Parameters.PAGE_SELECTION, HomePageSelector.ADD_ITEM);
+            String applicationPath = request.getServletContext().getRealPath("");
+            String pageSelector = HTMLFactory.getFormattedHTML(HomePageSelector.ADD_ITEM, applicationPath);
+            request.setAttribute(Parameters.PAGE_SELECTION, pageSelector);
         } else {
             request.setAttribute(Parameters.LOG, LOGMessage.SESSION_EXPIRED);
             page = Pages.INDEX;

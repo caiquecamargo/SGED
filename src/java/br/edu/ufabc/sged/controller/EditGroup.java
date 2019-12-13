@@ -9,12 +9,15 @@ import br.edu.ufabc.sged.dao.DataSource;
 import br.edu.ufabc.sged.dao.GrupoDAO;
 import br.edu.ufabc.sged.model.Grupo;
 import br.edu.ufabc.sged.model.Usuario;
+import br.edu.ufabc.sged.util.AttributesListMaker;
+import br.edu.ufabc.sged.util.HTMLFactory;
 import br.edu.ufabc.sged.util.HomePageSelector;
 import br.edu.ufabc.sged.util.LOGMessage;
 import br.edu.ufabc.sged.util.Pages;
 import br.edu.ufabc.sged.util.Parameters;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -46,8 +49,6 @@ public class EditGroup extends HttpServlet {
         String page = Pages.HOME;
         
         if (Usuario.exist(usuario)){
-            request.setAttribute(Parameters.PAGE_SELECTION, HomePageSelector.EDIT_GROUP);
-            
             Grupo GroupToEdit = new Grupo();
             int idGrupo = Integer.parseInt(request.getParameter("txt_id_grupo"));
             GroupToEdit.setId(idGrupo);
@@ -58,7 +59,12 @@ public class EditGroup extends HttpServlet {
             try {
                 List<Object> grupo = grupoDAO.read(GroupToEdit);
                 datasource.getConnection().close();
-                request.setAttribute(Parameters.OBJECT_LIST, grupo);
+                
+                String applicationPath = request.getServletContext().getRealPath("");
+                ArrayList<ArrayList<String>> attributesList = AttributesListMaker.getAttributesList(grupo);
+                String pageSelector = HTMLFactory.getFormattedHTML(HomePageSelector.EDIT_GROUP, applicationPath, attributesList);
+                
+                request.setAttribute(Parameters.PAGE_SELECTION, pageSelector);
                 request.setAttribute(Parameters.LOG, LOGMessage.getSuccessfulRecoveryMessage("Grupo"));
             } catch (RuntimeException | SQLException e) {
                 System.err.println(e.getMessage());

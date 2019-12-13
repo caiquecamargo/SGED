@@ -9,49 +9,58 @@ import br.edu.ufabc.sged.model.Grupo;
 import br.edu.ufabc.sged.model.Item;
 import br.edu.ufabc.sged.model.Usuario;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
  * @author Caique de Camargo
  */
 public class AttributesListMaker {
-    public static ArrayList<ArrayList<String>> getAttributesListItem(ArrayList<Item> itemsList){
+    public static ArrayList<ArrayList<String>> getAttributesList(List<Object> objectList) throws RuntimeException{
         ArrayList<ArrayList<String>> attributesList = new ArrayList<>();
-        for(Item item : itemsList){
-            ArrayList<String> attributes = new ArrayList<>();
-            attributes.add((Integer.toString(item.getId())));
-            attributes.add(item.getNome());
-            attributes.add(item.getTipo());
-            attributes.add(item.getSrc());
-            attributesList.add(attributes);
-        }
+        objectList.forEach((object) -> {
+            attributesList.add(getAttributes(object));
+        });
         return attributesList;
     }
     
-    public static ArrayList<ArrayList<String>> getAttributesListGroup(ArrayList<Grupo> groupsList){
-        ArrayList<ArrayList<String>> attributesList = new ArrayList<>();
-        for(Grupo group : groupsList){
-            ArrayList<String> attributes = new ArrayList<>();
-            attributes.add((Integer.toString(group.getId())));
-            attributes.add(group.getNome());
-            attributes.add((Integer.toString(group.getNivel())));
-            attributes.add(group.getDescricao());
-            attributesList.add(attributes);
-        }
-        return attributesList;
+    private static ArrayList<String> getAttributes(Object object){
+        if (object instanceof Item)
+            return getItemAttributes(object);
+        if (object instanceof Grupo)
+            return getGroupAttributes(object);
+        if (object instanceof Usuario)
+            return getUserAttributes(object);
+        throw new RuntimeException("Invalid Model Object");
     }
     
-    public static ArrayList<ArrayList<String>> getAttributesListUser(ArrayList<Usuario> usersList){
-        ArrayList<ArrayList<String>> attributesList = new ArrayList<>();
-        for(Usuario users : usersList){
-            ArrayList<String> attributes = new ArrayList<>();
-            attributes.add((Integer.toString(users.getId())));
-            attributes.add(users.getNome());
-            attributes.add(users.getEmail());
-            attributes.add((Integer.toString(users.getNivel_de_acesso())));
-            attributesList.add(attributes);
-        }
-        return attributesList;
+    private static ArrayList<String> getItemAttributes(Object object){
+        ArrayList<String> attributes = new ArrayList<>();
+        Item item = (Item) object;
+        attributes.add((Integer.toString(item.getId())));
+        attributes.add(item.getNome());
+        attributes.add(item.getTipo());
+        attributes.add(item.getSrc());
+        return attributes;
     }
     
+    private static ArrayList<String> getGroupAttributes(Object object){
+        ArrayList<String> attributes = new ArrayList<>();
+        Grupo group = (Grupo) object;
+        attributes.add((Integer.toString(group.getId())));
+        attributes.add(group.getNome());
+        attributes.add((Integer.toString(group.getNivel())));
+        attributes.add(group.getDescricao());
+        return attributes;
+    }
+    
+    private static ArrayList<String> getUserAttributes(Object object){
+        ArrayList<String> attributes = new ArrayList<>();
+        Usuario user = (Usuario) object;
+        attributes.add((Integer.toString(user.getId())));
+        attributes.add(user.getNome());
+        attributes.add(user.getEmail());
+        attributes.add((Integer.toString(user.getNivel_de_acesso())));
+        return attributes;
+    }    
 }

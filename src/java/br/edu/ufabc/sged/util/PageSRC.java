@@ -15,7 +15,7 @@ public class PageSRC {
     private final static HashMap<String, String> PAGE_SRC = new HashMap<String, String>();
 
     static {
-        PAGE_SRC.put(HomePageSelector.ADD_ITEM, "./pages/adicionarItem.html");
+        PAGE_SRC.put(HomePageSelector.ADD_ITEM, "pages/adicionarItem.html");
         PAGE_SRC.put(HomePageSelector.VIEW_ITENS, "./pages/visualizarItem.html");
         PAGE_SRC.put(HomePageSelector.ADD_GROUP, "./pages/adicionarGrupo.html");
         PAGE_SRC.put(HomePageSelector.VIEW_GROUPS, "./pages/visualizarGrupos.html");

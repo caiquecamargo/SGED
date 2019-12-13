@@ -5,8 +5,6 @@
  */
 package br.edu.ufabc.sged.model;
 
-import br.edu.ufabc.sged.dao.DataSource;
-import br.edu.ufabc.sged.dao.UsuarioDAO;
 import java.util.List;
 
 /**

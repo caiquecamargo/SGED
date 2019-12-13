@@ -8,6 +8,8 @@ package br.edu.ufabc.sged.controller;
 import br.edu.ufabc.sged.dao.DataSource;
 import br.edu.ufabc.sged.dao.UsuarioDAO;
 import br.edu.ufabc.sged.model.Usuario;
+import br.edu.ufabc.sged.util.AttributesListMaker;
+import br.edu.ufabc.sged.util.HTMLFactory;
 import br.edu.ufabc.sged.util.HomePageSelector;
 import br.edu.ufabc.sged.util.LOGMessage;
 import br.edu.ufabc.sged.util.Pages;
@@ -51,10 +53,14 @@ public class ValidateUser extends HttpServlet {
             UsuarioDAO userDAO = new UsuarioDAO(datasource);
             try{
                 List<Object> notSettedUers = userDAO.readNotSettedUsers(usuario);
-                request.setAttribute(Parameters.OBJECT_LIST, notSettedUers);
-                if (notSettedUers == null){
+                if (notSettedUers.isEmpty()){
                     request.setAttribute(Parameters.LOG, LOGMessage.NO_USERS_TO_VALIDATE);
                 } else {
+                    String applicationPath = request.getServletContext().getRealPath("");
+                    ArrayList<ArrayList<String>> attributesList = AttributesListMaker.getAttributesList(notSettedUers);
+                    String pageSelector = HTMLFactory.getFormattedHTML(HomePageSelector.VIEW_USERS, applicationPath, attributesList);
+
+                    request.setAttribute(Parameters.PAGE_SELECTION, pageSelector);
                     request.setAttribute(Parameters.LOG, LOGMessage.USERS_SUCCEFULLY_RECOVERED);
                 }
                 datasource.getConnection().close();

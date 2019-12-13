@@ -8,6 +8,8 @@ package br.edu.ufabc.sged.controller;
 import br.edu.ufabc.sged.dao.DataSource;
 import br.edu.ufabc.sged.dao.UsuarioDAO;
 import br.edu.ufabc.sged.model.Usuario;
+import br.edu.ufabc.sged.util.AttributesListMaker;
+import br.edu.ufabc.sged.util.HTMLFactory;
 import br.edu.ufabc.sged.util.HomePageSelector;
 import br.edu.ufabc.sged.util.LOGMessage;
 import br.edu.ufabc.sged.util.Pages;
@@ -45,8 +47,6 @@ public class EditUser extends HttpServlet {
         String page = Pages.HOME;
         
         if (Usuario.exist(usuario)){
-            request.setAttribute(Parameters.PAGE_SELECTION, HomePageSelector.EDIT_USER);
-        
             Usuario userToEditIncomplete = new Usuario();
             int idUsuario = Integer.parseInt(request.getParameter("txt_id_usuario"));
             userToEditIncomplete.setId(idUsuario);
@@ -57,9 +57,14 @@ public class EditUser extends HttpServlet {
             try {
                 List<Object> userToEdit = usuarioDAO.read(userToEditIncomplete);
                 datasource.getConnection().close();
-                request.setAttribute(Parameters.OBJECT_LIST, userToEdit);
+                
+                String applicationPath = request.getServletContext().getRealPath("");
+                ArrayList<ArrayList<String>> attributesList = AttributesListMaker.getAttributesList(userToEdit);
+                String pageSelector = HTMLFactory.getFormattedHTML(HomePageSelector.EDIT_USER, applicationPath, attributesList);
+                
+                request.setAttribute(Parameters.PAGE_SELECTION, pageSelector);
                 request.setAttribute(Parameters.LOG, LOGMessage.getSuccessfulRecoveryMessage("Usuário"));
-            } catch (RuntimeException | SQLException e) {
+            } catch (RuntimeException |IOException | SQLException e) {
                 System.err.println(e.getMessage());
                 request.setAttribute(Parameters.LOG, LOGMessage.getErrorRecoveryMessage("usuário") + " " + LOGMessage.CONTACT_ADMINISTRATOR);
             }

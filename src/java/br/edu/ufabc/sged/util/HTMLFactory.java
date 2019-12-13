@@ -16,28 +16,34 @@ import java.util.ArrayList;
  * @author Caique de Camargo
  */
 public class HTMLFactory {
-    public static String getFactoredHTML(String page, ArrayList<ArrayList<String>> attributesList) throws IOException {
-        File html = getFile(page);
-        String htmlNotFactored = getHTMLNotFactored(html);
-        String factoredHTML = factoryHTML(htmlNotFactored, page, attributesList);
-        return factoredHTML;
+    public static String getFormattedHTML(String page, String path) throws IOException {
+        File html = getFile(page, path);
+        String htmlNotFormatted = getHTMLNotFormatted(html);
+        return htmlNotFormatted;
+    }
+    
+    public static String getFormattedHTML(String page, String path, ArrayList<ArrayList<String>> attributesList) throws IOException {
+        File html = getFile(page, path);
+        String htmlNotFormatted = getHTMLNotFormatted(html);
+        String formatedHTML = formatHTML(htmlNotFormatted, page, attributesList);
+        return formatedHTML;
     }
 
-    private static File getFile(String page) {
+    private static File getFile(String page, String path) {
         String pageSRC = PageSRC.getPageSRCById(page);
-        return new File(pageSRC);
+        return new File(path + pageSRC);
     }
 
-    private static String getHTMLNotFactored(File file) throws IOException {
+    private static String getHTMLNotFormatted(File file) throws IOException {
         return FileUtils.readFileToString(file, "utf-8");
     }
 
-    private static String factoryHTML(String pageHTMLNotFactored, String page, ArrayList<ArrayList<String>> attributesList) {
-        String title = getTitle(pageHTMLNotFactored);
-        String header = getHeader(pageHTMLNotFactored);
-        String content = getContent(pageHTMLNotFactored);
-        String factoredContent = getFactoredContent(content, page, attributesList);
-        return title + header + factoredContent;
+    private static String formatHTML(String pageHTMLNotFormatted, String page, ArrayList<ArrayList<String>> attributesList) {
+        String title = getTitle(pageHTMLNotFormatted);
+        String header = getHeader(pageHTMLNotFormatted);
+        String content = getContent(pageHTMLNotFormatted);
+        String formattedContent = getFormattedContent(content, page, attributesList);
+        return String.join(" ",title, header, formattedContent);
     }
 
     private static String getTitle(String page) {
@@ -45,17 +51,17 @@ public class HTMLFactory {
     }
 
     private static String getHeader(String page) {
-        return StringUtils.substringBetween(page, "<!-- header -->");
+        return (StringUtils.substringBetween(page, "<!-- header -->") != null)?StringUtils.substringBetween(page, "<!-- header -->"):"";
     }
 
     private static String getContent(String page) {
         return StringUtils.substringBetween(page, "<!-- content -->");
     }
 
-    private static String getFactoredContent(String content, String page, ArrayList<ArrayList<String>> attributesList) {
+    private static String getFormattedContent(String content, String page, ArrayList<ArrayList<String>> attributesList) {
         ArrayList<String> tags = TagsHTML.getTagsById(page);
-        String factoredContent = putAttributesOnHTML(content, tags, attributesList);
-        return factoredContent;
+        String formatedContent = putAttributesOnHTML(content, tags, attributesList);
+        return formatedContent;
     }
     
     private static String putAttributesOnHTML(String content, ArrayList<String> tags, ArrayList<ArrayList<String>> attributesList){

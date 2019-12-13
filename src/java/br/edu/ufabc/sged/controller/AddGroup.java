@@ -10,6 +10,7 @@ import br.edu.ufabc.sged.dao.GrupoDAO;
 import br.edu.ufabc.sged.dao.UsuarioDAO;
 import br.edu.ufabc.sged.model.Grupo;
 import br.edu.ufabc.sged.model.Usuario;
+import br.edu.ufabc.sged.util.HTMLFactory;
 import br.edu.ufabc.sged.util.HomePageSelector;
 import br.edu.ufabc.sged.util.LOGMessage;
 import br.edu.ufabc.sged.util.Pages;
@@ -46,8 +47,14 @@ public class AddGroup extends HttpServlet {
         Usuario usuario = (Usuario) request.getSession().getAttribute(Parameters.SESSION_NAME);
         String page = Pages.HOME;
         
+        System.out.println("Fui chamado");
+        
         if (Usuario.exist(usuario)){
-            request.setAttribute(Parameters.PAGE_SELECTION, HomePageSelector.ADD_GROUP);
+            System.out.println("Usuario existe");
+            String applicationPath = request.getServletContext().getRealPath("");
+            String pageSelector = HTMLFactory.getFormattedHTML(HomePageSelector.ADD_GROUP, applicationPath);
+            request.setAttribute(Parameters.PAGE_SELECTION, pageSelector);
+            System.out.println(request.getAttribute(Parameters.PAGE_SELECTION));
         } else {
             request.setAttribute(Parameters.LOG, LOGMessage.SESSION_EXPIRED);
             page = Pages.INDEX;
@@ -69,9 +76,10 @@ public class AddGroup extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         Usuario usuario = (Usuario) request.getSession().getAttribute(Parameters.SESSION_NAME);
+        request = Parameters.setNullAttributesToRequest(request);
         String page     = Pages.HOME;
         
-        if(usuario != null){
+        if(Usuario.exist(usuario)){
             String nome      = request.getParameter("txt_nome");
             String descricao = request.getParameter("txt_descricao");
             int    nivel     = Integer.parseInt(request.getParameter("txt_nivel"));
@@ -89,8 +97,8 @@ public class AddGroup extends HttpServlet {
                 UsuarioDAO userdao = new UsuarioDAO(datasource);
                 userdao.setGrupoFromUsuario(usuario, grupo);
                 request.setAttribute(Parameters.LOG, LOGMessage.getSuccessfulAddingMessage("Grupo"));
-                request.setAttribute(Parameters.PAGE_SELECTION, HomePageSelector.NULL);
-                request.setAttribute(Parameters.OBJECT_LIST, new ArrayList<>());
+                request.setAttribute(Parameters.PAGE_SELECTION, "viewgroups");
+                page = "/viewgroups";
                 datasource.getConnection().close();
             } catch (RuntimeException | SQLException e) {
                 System.err.println(e.getMessage());

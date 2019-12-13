@@ -9,6 +9,8 @@ import br.edu.ufabc.sged.dao.DataSource;
 import br.edu.ufabc.sged.dao.GrupoDAO;
 import br.edu.ufabc.sged.model.Grupo;
 import br.edu.ufabc.sged.model.Usuario;
+import br.edu.ufabc.sged.util.AttributesListMaker;
+import br.edu.ufabc.sged.util.HTMLFactory;
 import br.edu.ufabc.sged.util.HomePageSelector;
 import br.edu.ufabc.sged.util.LOGMessage;
 import br.edu.ufabc.sged.util.Pages;
@@ -64,14 +66,18 @@ public class ViewGroupMembers extends HttpServlet {
         groupToReadMembers.setId(idGrupo);
         
         if (Usuario.exist(usuario)){
-            request.setAttribute(Parameters.PAGE_SELECTION, HomePageSelector.VIEW_GROUP_MEMBERS);
             DataSource datasource = new DataSource();
             GrupoDAO grupoDAO = new GrupoDAO(datasource);
             
             try {
                 List<Object> membersOfGroup = grupoDAO.readMembers(groupToReadMembers);
                 datasource.getConnection().close();
-                request.setAttribute(Parameters.OBJECT_LIST, membersOfGroup);
+                
+                String applicationPath = request.getServletContext().getRealPath("");
+                ArrayList<ArrayList<String>> attributesList = AttributesListMaker.getAttributesList(membersOfGroup);
+                String pageSelector = HTMLFactory.getFormattedHTML(HomePageSelector.VIEW_GROUP_MEMBERS, applicationPath, attributesList);
+                
+                request.setAttribute(Parameters.PAGE_SELECTION, pageSelector);
                 request.setAttribute(Parameters.LOG, LOGMessage.SUCCESSFUL_RECOVERY_GROUP_MEMBERS);
             } catch (RuntimeException | SQLException e) {
                 System.err.println(e.getMessage());
