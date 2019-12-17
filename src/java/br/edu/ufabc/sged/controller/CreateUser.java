@@ -36,23 +36,16 @@ public class CreateUser extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
         String page = Pages.NEW_USER;
-        String nome  = request.getParameter("txt_nome");
-        String email = request.getParameter("txt_email");
-        String senha = request.getParameter("txt_senha");
+        Usuario usuario = setUserWithRequestAttributes(request);
 
-        Usuario usuario = new Usuario();
-        usuario.setNome(nome);
-        usuario.setEmail(email);
-        usuario.setSenha(senha);
-
-        DataSource datasource = new DataSource();
-        UsuarioDAO usuarioDAO = new UsuarioDAO(datasource);
-        
         try {
+            DataSource datasource = new DataSource();
+            UsuarioDAO usuarioDAO = new UsuarioDAO(datasource);
+        
             usuarioDAO.create(usuario);
             datasource.getConnection().close();
+            
             page = Pages.INDEX;
             request.setAttribute(Parameters.LOG, LOGMessage.NULL);
         } catch (RuntimeException | SQLException e) {
@@ -62,6 +55,19 @@ public class CreateUser extends HttpServlet {
         
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(page);
         dispatcher.forward(request, response);
+    }
+    
+    private static Usuario setUserWithRequestAttributes(HttpServletRequest request){
+        String nome  = request.getParameter("txt_nome");
+        String email = request.getParameter("txt_email");
+        String senha = request.getParameter("txt_senha");
+
+        Usuario usuario = new Usuario();
+        usuario.setNome(nome);
+        usuario.setEmail(email);
+        usuario.setSenha(senha);
+        
+        return usuario;
     }
 
 

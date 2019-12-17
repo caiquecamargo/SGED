@@ -7,7 +7,6 @@ package br.edu.ufabc.sged.controller;
 
 import br.edu.ufabc.sged.dao.DataSource;
 import br.edu.ufabc.sged.dao.UsuarioDAO;
-import br.edu.ufabc.sged.model.Item;
 import br.edu.ufabc.sged.model.Usuario;
 import br.edu.ufabc.sged.util.AttributesListMaker;
 import br.edu.ufabc.sged.util.HTMLFactory;
@@ -47,9 +46,10 @@ public class ViewItem extends HttpServlet {
         Usuario usuario = (Usuario) request.getSession().getAttribute(Parameters.SESSION_NAME);
         
         if (Usuario.exist(usuario)){
-            DataSource datasource = new DataSource();
-            UsuarioDAO usuariodao = new UsuarioDAO(datasource);
             try {
+                DataSource datasource = new DataSource();
+                UsuarioDAO usuariodao = new UsuarioDAO(datasource);
+            
                 usuario.setItens(usuariodao.readUsuarioItem(usuario));
                 datasource.getConnection().close();
                 
@@ -83,6 +83,34 @@ public class ViewItem extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        request = Parameters.setNullAttributesToRequest(request);
+        String page = Pages.HOME;
+        Usuario usuario = (Usuario) request.getSession().getAttribute(Parameters.SESSION_NAME);
         
+        if (Usuario.exist(usuario)){
+            try {
+                DataSource datasource = new DataSource();
+                UsuarioDAO usuariodao = new UsuarioDAO(datasource);
+            
+                usuario.setItens(usuariodao.readUsuarioItem(usuario));
+                datasource.getConnection().close();
+                
+                String applicationPath = request.getServletContext().getRealPath("");
+                ArrayList<ArrayList<String>> attributesList = AttributesListMaker.getAttributesList(usuario.getItens());
+                String pageSelector = HTMLFactory.getFormattedHTML(HomePageSelector.VIEW_ITENS, applicationPath, attributesList);
+                
+                request.setAttribute(Parameters.LOG, LOGMessage.getSuccessfulRecoveryMessage("Itens"));
+                request.setAttribute(Parameters.PAGE_SELECTION, pageSelector);
+            } catch (RuntimeException | SQLException e) {
+                System.err.println(e.getMessage());
+                request.setAttribute(Parameters.LOG, LOGMessage.getErrorRecoveryMessage("itens") + " " + LOGMessage.CONTACT_ADMINISTRATOR);
+            }
+        } else {
+            request.setAttribute(Parameters.LOG, LOGMessage.SESSION_EXPIRED);
+            page = Pages.INDEX;
+        }
+        
+        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(page);
+        dispatcher.forward(request, response);
     }
 }

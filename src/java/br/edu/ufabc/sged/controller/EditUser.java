@@ -42,19 +42,30 @@ public class EditUser extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+            }
+
+    /**
+     * Handles the HTTP <code>POST</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         request = Parameters.setNullAttributesToRequest(request);
         Usuario usuario = (Usuario) request.getSession().getAttribute(Parameters.SESSION_NAME);
         String page = Pages.HOME;
         
         if (Usuario.exist(usuario)){
-            Usuario userToEditIncomplete = new Usuario();
-            int idUsuario = Integer.parseInt(request.getParameter("txt_id_usuario"));
-            userToEditIncomplete.setId(idUsuario);
-            
-            DataSource datasource = new DataSource();
-            UsuarioDAO usuarioDAO = new UsuarioDAO(datasource);
+            Usuario userToEditIncomplete = setUserWithRequestAttributes(request);
             
             try {
+                DataSource datasource = new DataSource();
+                UsuarioDAO usuarioDAO = new UsuarioDAO(datasource);
+            
                 List<Object> userToEdit = usuarioDAO.read(userToEditIncomplete);
                 datasource.getConnection().close();
                 
@@ -76,18 +87,12 @@ public class EditUser extends HttpServlet {
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(page);
         dispatcher.forward(request, response);
     }
-
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    
+    private static Usuario setUserWithRequestAttributes(HttpServletRequest request){
+        Usuario userToEditIncomplete = new Usuario();
+        int idUsuario = Integer.parseInt(request.getParameter("txt_id_usuario"));
+        userToEditIncomplete.setId(idUsuario);
         
+        return userToEditIncomplete;
     }
 }

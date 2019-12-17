@@ -15,9 +15,9 @@ import br.edu.ufabc.sged.util.HomePageSelector;
 import br.edu.ufabc.sged.util.LOGMessage;
 import br.edu.ufabc.sged.util.Pages;
 import br.edu.ufabc.sged.util.Parameters;
+import br.edu.ufabc.sged.util.ServletNames;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -43,18 +43,13 @@ public class AddGroup extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request = Parameters.setNullAttributesToRequest(request);
-        
         Usuario usuario = (Usuario) request.getSession().getAttribute(Parameters.SESSION_NAME);
         String page = Pages.HOME;
         
-        System.out.println("Fui chamado");
-        
         if (Usuario.exist(usuario)){
-            System.out.println("Usuario existe");
             String applicationPath = request.getServletContext().getRealPath("");
             String pageSelector = HTMLFactory.getFormattedHTML(HomePageSelector.ADD_GROUP, applicationPath);
             request.setAttribute(Parameters.PAGE_SELECTION, pageSelector);
-            System.out.println(request.getAttribute(Parameters.PAGE_SELECTION));
         } else {
             request.setAttribute(Parameters.LOG, LOGMessage.SESSION_EXPIRED);
             page = Pages.INDEX;
@@ -80,25 +75,19 @@ public class AddGroup extends HttpServlet {
         String page     = Pages.HOME;
         
         if(Usuario.exist(usuario)){
-            String nome      = request.getParameter("txt_nome");
-            String descricao = request.getParameter("txt_descricao");
-            int    nivel     = Integer.parseInt(request.getParameter("txt_nivel"));
-
-            Grupo grupo = new Grupo();
-            grupo.setNome(nome);
-            grupo.setDescricao(descricao);
-            grupo.setNivel(nivel);
-
-            DataSource datasource = new DataSource();
-            GrupoDAO   grupodao   = new GrupoDAO(datasource);
-
+            Grupo grupo = setGroupWithRequestAttributes(request);
+            
             try {
+                DataSource datasource = new DataSource();
+                GrupoDAO   grupodao   = new GrupoDAO(datasource);
+                UsuarioDAO userdao    = new UsuarioDAO(datasource);
+                
                 grupodao.create(grupo);
-                UsuarioDAO userdao = new UsuarioDAO(datasource);
                 userdao.setGrupoFromUsuario(usuario, grupo);
-                request.setAttribute(Parameters.LOG, LOGMessage.getSuccessfulAddingMessage("Grupo"));
-                request.setAttribute(Parameters.PAGE_SELECTION, "viewgroups");
-                page = "/viewgroups";
+                
+                request.setAttribute(Parameters.LOG, LOGMessage.getSuccessfulAddingMessage("Grupo"));                
+                page = ServletNames.VIEW_GROUPS;
+                
                 datasource.getConnection().close();
             } catch (RuntimeException | SQLException e) {
                 System.err.println(e.getMessage());
@@ -111,5 +100,18 @@ public class AddGroup extends HttpServlet {
         
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(page);
         dispatcher.forward(request, response);
+    }
+    
+    private static Grupo setGroupWithRequestAttributes(HttpServletRequest request){
+        String nome      = request.getParameter("txt_nome");
+        String descricao = request.getParameter("txt_descricao");
+        int    nivel     = Integer.parseInt(request.getParameter("txt_nivel"));
+
+        Grupo grupo = new Grupo();
+        grupo.setNome(nome);
+        grupo.setDescricao(descricao);
+        grupo.setNivel(nivel);
+        
+        return grupo;
     }
 }

@@ -47,12 +47,10 @@ public class ViewUsers extends HttpServlet {
         String page = Pages.HOME;
         
         if (Usuario.exist(usuario)){
-            
-            
-            DataSource datasource = new DataSource();
-            UsuarioDAO userDAO = new UsuarioDAO(datasource);
-            
             try {
+                DataSource datasource = new DataSource();
+                UsuarioDAO userDAO = new UsuarioDAO(datasource);
+            
                 List<Object> usersOfGroup = userDAO.readUsuarioFromGrupo(usuario);
                 datasource.getConnection().close();
                 

@@ -9,14 +9,13 @@ import br.edu.ufabc.sged.dao.DataSource;
 import br.edu.ufabc.sged.dao.ItemDAO;
 import br.edu.ufabc.sged.model.Item;
 import br.edu.ufabc.sged.model.Usuario;
-import br.edu.ufabc.sged.util.HomePageSelector;
 import br.edu.ufabc.sged.util.LOGMessage;
 import br.edu.ufabc.sged.util.Pages;
 import br.edu.ufabc.sged.util.Parameters;
+import br.edu.ufabc.sged.util.ServletNames;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -63,33 +62,28 @@ public class DeleteItem extends HttpServlet {
         String tipo = request.getParameter("txt_tipo");
         String src  = request.getParameter("txt_src");
         
-        if(Usuario.exist(usuario)){
-            try{
-                Item item = Item.getItemAsType(tipo);
-                request.setAttribute(Parameters.PAGE_SELECTION, HomePageSelector.VIEW_ITENS);
-                
+        if(Usuario.exist(usuario)){              
+            try {
+                Item item = Item.getItemAsType(tipo);                        
                 item.setId(idItem);
                 item.setSrc(src);
-                
+
                 DataSource datasource = new DataSource();
                 ItemDAO itemDAO = new ItemDAO(datasource);
-                
-                try {
-                    itemDAO.deleteRelationship(item);
-                    itemDAO.delete(item);
-                    datasource.getConnection().close();
-                    
-                    File file = new File(item.getSrc());
-                    file.delete();
-                    request.setAttribute(Parameters.LOG, LOGMessage.getSuccessfulDeleteMessage(item.getTipo()));
-                } catch (RuntimeException | SQLException e){
-                    System.err.println(e.getMessage());
-                    request.setAttribute(Parameters.LOG, LOGMessage.getErrorDeleteMessage(item.getTipo()) + " " + LOGMessage.CONTACT_ADMINISTRATOR);
-                } 
-            } catch (RuntimeException e) {
+
+                itemDAO.deleteRelationship(item);
+                itemDAO.delete(item);
+                datasource.getConnection().close();
+
+                File file = new File(item.getSrc());
+                file.delete();
+                request.setAttribute(Parameters.LOG, LOGMessage.getSuccessfulDeleteMessage(item.getTipo()));
+
+                page = ServletNames.VIEW_ITEM;
+            } catch (RuntimeException | SQLException e){
                 System.err.println(e.getMessage());
                 request.setAttribute(Parameters.LOG, LOGMessage.getErrorDeleteMessage("item") + " " + LOGMessage.CONTACT_ADMINISTRATOR);
-            }
+            } 
         } else {
             request.setAttribute(Parameters.LOG, LOGMessage.SESSION_EXPIRED);
             page = Pages.INDEX;

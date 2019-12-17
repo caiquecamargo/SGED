@@ -61,15 +61,12 @@ public class ViewGroupMembers extends HttpServlet {
         Usuario usuario = (Usuario) request.getSession().getAttribute(Parameters.SESSION_NAME);
         String page = Pages.HOME;
         
-        int     idGrupo = Integer.parseInt(request.getParameter("txt_id_grupo"));
-        Grupo groupToReadMembers = new Grupo();
-        groupToReadMembers.setId(idGrupo);
-        
         if (Usuario.exist(usuario)){
-            DataSource datasource = new DataSource();
-            GrupoDAO grupoDAO = new GrupoDAO(datasource);
-            
+            Grupo groupToReadMembers = setGroupWithRequestAttributes(request);
             try {
+                DataSource datasource = new DataSource();
+                GrupoDAO grupoDAO = new GrupoDAO(datasource);
+            
                 List<Object> membersOfGroup = grupoDAO.readMembers(groupToReadMembers);
                 datasource.getConnection().close();
                 
@@ -90,6 +87,14 @@ public class ViewGroupMembers extends HttpServlet {
         
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(page);
         dispatcher.forward(request, response);
+    }
+    
+    private static Grupo setGroupWithRequestAttributes(HttpServletRequest request){
+        int idGrupo = Integer.parseInt(request.getParameter("txt_id_grupo"));
+        Grupo groupToReadMembers = new Grupo();
+        groupToReadMembers.setId(idGrupo);
+        
+        return groupToReadMembers;
     }
 
 }

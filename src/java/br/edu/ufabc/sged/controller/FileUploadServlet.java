@@ -14,10 +14,10 @@ import br.edu.ufabc.sged.util.HomePageSelector;
 import br.edu.ufabc.sged.util.LOGMessage;
 import br.edu.ufabc.sged.util.Pages;
 import br.edu.ufabc.sged.util.Parameters;
+import br.edu.ufabc.sged.util.ServletNames;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.RequestDispatcher;
@@ -82,13 +82,16 @@ public class FileUploadServlet extends HttpServlet {
                 try{
                     DataSource dataSource = new DataSource();
                     ItemDAO itemDAO = new ItemDAO(dataSource);
-                    itemDAO.create(item);
                     UsuarioDAO userDAO = new UsuarioDAO(dataSource);
+                    
+                    itemDAO.create(item);
                     userDAO.setUsuarioItem(usuario, item);
                     dataSource.getConnection().close();
 
                     part.write(item.getSrc());
                     request.setAttribute(Parameters.LOG, LOGMessage.getSuccessfulUploadFileMessage(item.getSrc()));
+                    
+                    page = ServletNames.VIEW_ITEM;
                 } catch (RuntimeException | SQLException e){
                     System.err.println(e);
                     request.setAttribute(Parameters.LOG, LOGMessage.ERROR_UPLOAD_FILE_MESSAGE + " " + LOGMessage.CONTACT_ADMINISTRATOR);

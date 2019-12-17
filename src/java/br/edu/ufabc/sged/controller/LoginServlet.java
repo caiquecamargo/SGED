@@ -19,6 +19,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import sun.font.FontUtilities;
 
 /**
  *
@@ -30,21 +31,15 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request = Parameters.setNullAttributesToRequest(request);
-        
-        String user = request.getParameter("txt_user");
-        String password = request.getParameter("txt_password");
-        
-        Usuario userToLogin = new Usuario();
-        userToLogin.setEmail(user);
-        userToLogin.setSenha(password);
-        
         String page = Pages.LOGIN;
+        
+        Usuario userToLogin = setUserWithRequestAttributes(request);
         
         try {
             DataSource datasource = new DataSource();
             UsuarioDAO userDAO = new UsuarioDAO(datasource);
             List<Object> res = userDAO.login(userToLogin);
-            if (res != null && res.size()>0){
+            if (res.size() > 0){
                 Usuario usuario = (Usuario) res.get(0);
                 if(usuario.getSituacao() != 0){
                     page = Pages.HOME;
@@ -63,5 +58,16 @@ public class LoginServlet extends HttpServlet {
         
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(page);
         dispatcher.forward(request, response);
+    }
+    
+    private static Usuario setUserWithRequestAttributes(HttpServletRequest request){
+        String user = request.getParameter("txt_user");
+        String password = request.getParameter("txt_password");
+        
+        Usuario userToLogin = new Usuario();
+        userToLogin.setEmail(user);
+        userToLogin.setSenha(password);
+        
+        return userToLogin;
     }
 }

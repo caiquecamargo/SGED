@@ -7,7 +7,6 @@ package br.edu.ufabc.sged.controller;
 
 import br.edu.ufabc.sged.util.Pages;
 import java.io.IOException;
-import java.io.PrintWriter;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

@@ -10,6 +10,7 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>ORION SGED</title>
+<link href="https://fonts.googleapis.com/css?family=Cinzel&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/normalize.css">
 <link rel="stylesheet" href="css/reset.css">
 <link rel="stylesheet" href="css/style.css">
@@ -51,10 +52,8 @@
     </footer>
   </div>
   <!-- JavaScript -->
-  <script src="./js/scroll.js"></script>
   <script src="./js/jquery.js"></script>
   <script src="./js/menu.js"></script>
-  <script src="./js/dropzone.js"></script>
   <!-- JavaScript -->
 </body>
 </html>

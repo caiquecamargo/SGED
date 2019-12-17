@@ -12,7 +12,6 @@ import br.edu.ufabc.sged.util.LOGMessage;
 import br.edu.ufabc.sged.util.Pages;
 import br.edu.ufabc.sged.util.Parameters;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -65,32 +64,27 @@ public class MyAccount extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        request = Parameters.setNullAttributesToRequest(request);
         Usuario usuario = (Usuario) request.getSession().getAttribute("usuario");
-        String page = "/minhaconta.jsp";
-        ArrayList<Object> list = new ArrayList<>();
-        request.setAttribute("errorSTR", "");
-        request.setAttribute("objectList", list);
+        String page = Pages.MY_ACCOUNT;
         
         usuario.setSenha(request.getParameter("txt_senha"));
         
-        if (usuario != null){
-            DataSource datasource = new DataSource();
-            UsuarioDAO usuarioDAO = new UsuarioDAO(datasource);
-            
+        if (Usuario.exist(usuario)){
             try {
+                DataSource datasource = new DataSource();
+                UsuarioDAO usuarioDAO = new UsuarioDAO(datasource);
+            
                 List<Object> grupo = usuarioDAO.read(usuario);
                 datasource.getConnection().close();
-                request.setAttribute("errorSTR", "Dados atualizados com sucesso");
-            } catch (RuntimeException e) {
+                request.setAttribute(Parameters.LOG, "Dados atualizados com sucesso");
+            } catch (RuntimeException | SQLException e) {
                 System.err.println(e.getMessage());
-                request.setAttribute("errorSTR", e.getMessage());
-            } catch (SQLException ex) {
-                System.err.println(ex.getMessage());
-                request.setAttribute("errorSTR", "Erro ao editar Usuario. Contate administrador do sistema.");
+                request.setAttribute(Parameters.LOG, e.getMessage());
             }
         } else {
-            request.setAttribute("errorSTR", "Sessão expirada");
-            page = "/index.jsp";
+            request.setAttribute(Parameters.LOG, LOGMessage.SESSION_EXPIRED);
+            page = Pages.INDEX;
         }
         
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(page);

@@ -46,9 +46,10 @@ public class ViewGroups extends HttpServlet {
         Usuario usuario = (Usuario) request.getSession().getAttribute(Parameters.SESSION_NAME);
         
         if (Usuario.exist(usuario)){
-            DataSource datasource = new DataSource();
-            UsuarioDAO usuariodao = new UsuarioDAO(datasource);
             try {
+                DataSource datasource = new DataSource();
+                UsuarioDAO usuariodao = new UsuarioDAO(datasource);
+            
                 usuario.setGrupo(usuariodao.readGrupoFromUsuario(usuario));
                 datasource.getConnection().close();
                 
@@ -82,6 +83,34 @@ public class ViewGroups extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        request = Parameters.setNullAttributesToRequest(request);
+        String page = Pages.HOME;
+        Usuario usuario = (Usuario) request.getSession().getAttribute(Parameters.SESSION_NAME);
         
+        if (Usuario.exist(usuario)){
+            try {
+                DataSource datasource = new DataSource();
+                UsuarioDAO usuariodao = new UsuarioDAO(datasource);
+            
+                usuario.setGrupo(usuariodao.readGrupoFromUsuario(usuario));
+                datasource.getConnection().close();
+                
+                String applicationPath = request.getServletContext().getRealPath("");
+                ArrayList<ArrayList<String>> attributesList = AttributesListMaker.getAttributesList(usuario.getGrupo());
+                String pageSelector = HTMLFactory.getFormattedHTML(HomePageSelector.VIEW_GROUPS, applicationPath, attributesList);
+                
+                request.setAttribute(Parameters.PAGE_SELECTION, pageSelector);
+                request.setAttribute(Parameters.LOG, LOGMessage.getSuccessfulRecoveryMessage("Grupos"));
+            } catch (RuntimeException | SQLException e) {
+                System.err.println(e.getMessage());
+                request.setAttribute(Parameters.LOG, LOGMessage.getErrorRecoveryMessage("grupos") + " " + LOGMessage.CONTACT_ADMINISTRATOR);
+            }
+        } else {
+            request.setAttribute(Parameters.LOG, LOGMessage.SESSION_EXPIRED);
+            page = Pages.INDEX;
+        }        
+        
+        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(page);
+        dispatcher.forward(request, response);
     }
 }

@@ -47,24 +47,23 @@ public class ValidateUser extends HttpServlet {
         String page = Pages.HOME;
         
         if (Usuario.exist(usuario)){
-            request.setAttribute(Parameters.PAGE_SELECTION, HomePageSelector.VIEW_USERS);
-
-            DataSource datasource = new DataSource();
-            UsuarioDAO userDAO = new UsuarioDAO(datasource);
             try{
+                DataSource datasource = new DataSource();
+                UsuarioDAO userDAO = new UsuarioDAO(datasource);
+            
                 List<Object> notSettedUers = userDAO.readNotSettedUsers(usuario);
                 if (notSettedUers.isEmpty()){
                     request.setAttribute(Parameters.LOG, LOGMessage.NO_USERS_TO_VALIDATE);
                 } else {
                     String applicationPath = request.getServletContext().getRealPath("");
                     ArrayList<ArrayList<String>> attributesList = AttributesListMaker.getAttributesList(notSettedUers);
-                    String pageSelector = HTMLFactory.getFormattedHTML(HomePageSelector.VIEW_USERS, applicationPath, attributesList);
+                    String pageSelector = HTMLFactory.getFormattedHTML(HomePageSelector.VALIDATE_USER, applicationPath, attributesList);
 
                     request.setAttribute(Parameters.PAGE_SELECTION, pageSelector);
                     request.setAttribute(Parameters.LOG, LOGMessage.USERS_SUCCEFULLY_RECOVERED);
                 }
                 datasource.getConnection().close();
-            } catch (RuntimeException | SQLException e){
+            } catch (RuntimeException | IOException | SQLException e){
                 System.err.println(e.getMessage());
                 request.setAttribute(Parameters.LOG, LOGMessage.getErrorRecoveryMessage("usuários") + " " + LOGMessage.CONTACT_ADMINISTRATOR);
             }
@@ -84,18 +83,13 @@ public class ValidateUser extends HttpServlet {
         Usuario usuario = (Usuario) request.getSession().getAttribute(Parameters.SESSION_NAME);
         String page = Pages.HOME;
         
-        if (Usuario.exist(usuario)){
-            request.setAttribute(Parameters.PAGE_SELECTION, HomePageSelector.VALIDATE_USER);
-            
-            Usuario incompleteUserToEnable = new Usuario();        
-            int idEnableUsuario = Integer.parseInt(request.getParameter("txt_id_usuario"));
-            int nivel_de_acesso = Integer.parseInt(request.getParameter("txt_nivel_de_acesso"));
-            incompleteUserToEnable.setId(idEnableUsuario);
-            incompleteUserToEnable.setNivel_de_acesso(nivel_de_acesso);
+        if (Usuario.exist(usuario)){            
+            Usuario incompleteUserToEnable = setUserWithRequestAttributes(request);
             
             try{
                 DataSource datasource = new DataSource();
                 UsuarioDAO userDAO = new UsuarioDAO(datasource);
+                
                 Usuario enabledUser = (Usuario) userDAO.read(incompleteUserToEnable).get(0);
                 if (usuario.havePermission(enabledUser)) {
                     userDAO.enableUser(enabledUser);
@@ -115,5 +109,15 @@ public class ValidateUser extends HttpServlet {
         
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(page);
         dispatcher.forward(request, response);
+    }
+    
+    private static Usuario setUserWithRequestAttributes(HttpServletRequest request){
+        Usuario incompleteUserToEnable = new Usuario();        
+        int idEnableUsuario = Integer.parseInt(request.getParameter("txt_id_usuario"));
+        int nivel_de_acesso = Integer.parseInt(request.getParameter("txt_nivel_de_acesso"));
+        incompleteUserToEnable.setId(idEnableUsuario);
+        incompleteUserToEnable.setNivel_de_acesso(nivel_de_acesso);
+        
+        return incompleteUserToEnable;
     }
 }

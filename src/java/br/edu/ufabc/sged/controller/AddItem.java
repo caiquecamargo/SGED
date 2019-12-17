@@ -12,7 +12,6 @@ import br.edu.ufabc.sged.util.LOGMessage;
 import br.edu.ufabc.sged.util.Pages;
 import br.edu.ufabc.sged.util.Parameters;
 import java.io.IOException;
-import java.util.ArrayList;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -42,9 +41,15 @@ public class AddItem extends HttpServlet {
         String page = Pages.HOME;
         
         if (Usuario.exist(usuario)){
-            String applicationPath = request.getServletContext().getRealPath("");
-            String pageSelector = HTMLFactory.getFormattedHTML(HomePageSelector.ADD_ITEM, applicationPath);
-            request.setAttribute(Parameters.PAGE_SELECTION, pageSelector);
+            try{
+                String applicationPath = request.getServletContext().getRealPath("");
+                String pageSelector = HTMLFactory.getFormattedHTML(HomePageSelector.ADD_ITEM, applicationPath);
+                request.setAttribute(Parameters.PAGE_SELECTION, pageSelector);
+            } catch (IOException e) {
+                System.err.println(e.getMessage());
+                System.err.println(LOGMessage.getErrorRecoveryMessage("Item"));
+            }
+            
         } else {
             request.setAttribute(Parameters.LOG, LOGMessage.SESSION_EXPIRED);
             page = Pages.INDEX;

@@ -20,19 +20,14 @@ public class DataSource {
     private String database;
     private Connection connection;
     
-    public DataSource(){
-        try{
-            hostname = "localhost";
-            database = "sged";
-            username = "sged";
-            password = "CaiqueMetal199#";
-            String URL = "jdbc:mysql://"+hostname+":3306/"+database+"?useTimezone=true&serverTimezone=UTC";
-            DriverManager.registerDriver(new com.mysql.cj.jdbc.Driver());
-            connection = DriverManager.getConnection(URL, username, password);
-            System.out.println("Data Source created");
-        }catch(SQLException ex){
-            System.err.println("Erro ao conectar - " + ex.getMessage());
-        }
+    public DataSource() throws SQLException{
+        hostname = "localhost";
+        database = "sged";
+        username = "sged";
+        password = "CaiqueMetal199#";
+        String URL = "jdbc:mysql://"+hostname+":3306/"+database+"?useTimezone=true&serverTimezone=UTC";
+        DriverManager.registerDriver(new com.mysql.cj.jdbc.Driver());
+        connection = DriverManager.getConnection(URL, username, password);
     }
     
     public Connection getConnection(){
